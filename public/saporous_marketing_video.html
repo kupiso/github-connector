@@ -1684,7 +1684,7 @@ body {
         utt.onerror = function () {
           if (isMusicOn) setMusicVolume(0.32);
           var wv = document.getElementById("voiceWave");
-          if (wv) ww.classList.remove("active");
+          if (wv) wv.classList.remove("active");
           /* On error, still advance */
           voiceTimers.push(setTimeout(speakNext, 500));
         };
