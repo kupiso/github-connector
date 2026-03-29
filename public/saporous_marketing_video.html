@@ -1362,7 +1362,7 @@ body {
     if (audioCtx) return;
     audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
     musicGain = audioCtx.createGain();
-    musicGain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+    musicGain.gain.setValueAtTime(0.32, audioCtx.currentTime);
     musicGain.connect(audioCtx.destination);
     startMusic();
   }
@@ -1537,7 +1537,7 @@ body {
     var btn = document.getElementById("musicBtn");
     if (isMusicOn) {
       if (btn) btn.textContent = "🎵 MUSIC";
-      setMusicVolume(0.18);
+      setMusicVolume(0.32);
       if (!musicTimer) scheduleMusicLoop();
     } else {
       if (btn) btn.textContent = "🔇 MUSIC";
@@ -1662,19 +1662,19 @@ body {
         }
         var utt = new SpeechSynthesisUtterance(line.text);
         if (voiceObj) utt.voice = voiceObj;
-        utt.rate   = 0.82;
-        utt.pitch  = 1.06;
+        utt.rate   = 0.88;
+        utt.pitch  = 1.1;
         utt.volume = 1.0;
         utt.lang   = voiceObj ? voiceObj.lang : "en-US";
 
         utt.onstart = function () {
-          if (isMusicOn) setMusicVolume(0.055);
+          if (isMusicOn) setMusicVolume(0.14);
           var wv = document.getElementById("voiceWave");
           if (wv) wv.classList.add("active");
         };
 
         utt.onend = function () {
-          if (isMusicOn) setMusicVolume(0.18);
+          if (isMusicOn) setMusicVolume(0.32);
           var wv = document.getElementById("voiceWave");
           if (wv) wv.classList.remove("active");
           /* Chain to next line */
@@ -1682,7 +1682,7 @@ body {
         };
 
         utt.onerror = function () {
-          if (isMusicOn) setMusicVolume(0.18);
+          if (isMusicOn) setMusicVolume(0.32);
           var wv = document.getElementById("voiceWave");
           if (wv) wv.classList.remove("active");
           /* On error, still advance */
