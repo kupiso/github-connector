@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saporous — Marketing Video</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #000;
+  font-family: "DM Sans", sans-serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  cursor: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── MAIN STAGE ── */
+#stage {
+  width: 1280px;
+  height: 720px;
+  position: relative;
+  overflow: hidden;
+  background: #050810;
+  flex-shrink: 0;
+  box-shadow: 0 0 80px rgba(249,106,0,0.15);
+  transform-origin: center center;
+}
+
+/* ── SCENES ── */
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.05s;
+}
+.scene.active { opacity: 1; pointer-events: auto; }
+
+/* ── SHARED BG CANVAS ── */
+#bgCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* ── PROGRESS BAR ── */
+#progressBar {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f96a00, #ffd700, #2ecc71);
+  z-index: 999;
+  transition: width 0.1s linear;
+}
+
+/* ── SCENE COUNTER ── */
+#sceneInfo {
+  position: absolute;
+  bottom: 68px; right: 24px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  z-index: 999;
+  letter-spacing: 0.1em;
+}
+
+/* ── PLAY BUTTON OVERLAY ── */
+#playOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  backdrop-filter: blur(8px);
+}
+
+#playBtn {
+  width: 100px; height: 100px;
+  background: linear-gradient(135deg, #f96a00, #d94f00);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 40px rgba(249,106,0,0.6), 0 0 80px rgba(249,106,0,0.3);
+  animation: playPulse 2s ease-in-out infinite;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+@keyframes playPulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 40px rgba(249,106,0,0.6); }
+  50% { transform: scale(1.06); box-shadow: 0 0 70px rgba(249,106,0,0.9), 0 0 120px rgba(249,106,0,0.4); }
+}
+
+#playOverlay h2 {
+  font-family: "Syne", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+#playOverlay p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── SKIP BUTTON ── */
+/* #skipBtn is now inside the control bar */
+
+/* ══════════════════════════════
+   SCENE 1 — INTRO / BRAND REVEAL
+══════════════════════════════ */
+#s1 { background: #050810; }
+
+.s1-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(249,106,0,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249,106,0,0.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridPan 20s linear infinite;
+}
+@keyframes gridPan { from { transform: translate(0,0); } to { transform: translate(80px,80px); } }
+
+.s1-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+.s1-orb.a { width: 600px; height: 600px; background: rgba(249,106,0,0.18); top: -150px; right: -100px; animation: orbFloat 8s ease-in-out infinite; }
+.s1-orb.b { width: 400px; height: 400px; background: rgba(46,204,113,0.1); bottom: -100px; left: -80px; animation: orbFloat 10s ease-in-out infinite reverse; }
+@keyframes orbFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+
+.s1-logo-wrap {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+}
+
+.s1-logo-icon {
+  width: 90px; height: 90px;
+  background: linear-gradient(135deg, #ff8c00, #f96a00, #e05500);
+  border-radius: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Syne", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 auto 1.2rem;
+  box-shadow: 0 0 40px rgba(249,106,0,0.7), 0 0 80px rgba(249,106,0,0.3);
+  opacity: 0;
+  transform: scale(0.3) rotate(-15deg);
+}
+
+.s1-brand {
+  font-family: "Syne", sans-serif;
+  font-size: 5.5rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(30px);
+  line-height: 1;
+}
+
+.s1-brand .orange { color: #f96a00; }
+
+.s1-tagline {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.s1-url {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  color: rgba(249,106,0,0.8);
+  margin-top: 1.5rem;
+  opacity: 0;
+  letter-spacing: 0.08em;
+}
+
+/* ══════════════════════════════
+   SCENE 2 — PROBLEM / HOOK
+══════════════════════════════ */
+#s2 { background: #050810; }
+
+.s2-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(249,106,0,0.08) 0%, transparent 60%);
+}
+
+.s2-content {
+  position: absolute;
+  top: 50%; left: 10%;
+  transform: translateY(-50%);
+  max-width: 700px;
+  z-index: 2;
+}
+
+.s2-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  color: #f96a00;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+}
+
+.s2-headline {
+  font-family: "Syne", sans-serif;
+  font-size: 3.6rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #fff;
+  opacity: 0;
+}
+
+.s2-headline .hl { color: #f96a00; }
+
+.s2-sub {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  margin-top: 1.5rem;
+  max-width: 560px;
+  opacity: 0;
+}
+
+.s2-stat-row {
+  display: flex;
+  gap: 3rem;
+  margin-top: 2.5rem;
+  opacity: 0;
+}
+
+.s2-stat-num {
+  font-family: "Syne", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #f96a00;
+  line-height: 1;
+}
+
+.s2-stat-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.3rem;
+}
+
+/* ══════════════════════════════
+   SCENE 3 — SERVICES SHOWCASE
+══════════════════════════════ */
+#s3 { background: #080c14; }
+
+.s3-header {
+  position: absolute;
+  top: 70px; left: 10%;
+  z-index: 2;
+  opacity: 0;
+}
+
+.s3-header-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  color: #f96a00;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.s3-header h2 {
+  font-family: "Syne", sans-serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.s3-cards {
+  position: absolute;
+  bottom: 60px; left: 10%; right: 10%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  z-index: 2;
+}
+
+.s3-card {
+  background: rgba(22,27,36,0.9);
+  border: 1px solid rgba(249,106,0,0.15);
+  border-radius: 16px;
+  padding: 1.6rem 1.4rem;
+  opacity: 0;
+  transform: translateY(40px);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.s3-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #f96a00, transparent);
+}
+
+.s3-card-icon { font-size: 1.8rem; margin-bottom: 0.8rem; }
+.s3-card-title {
+  font-family: "Syne", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+.s3-card-desc { font-size: 0.78rem; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+/* ══════════════════════════════
+   SCENE 4 — TECH / CREDIBILITY
+══════════════════════════════ */
+#s4 { background: #050810; }
+
+.s4-left {
+  position: absolute;
+  left: 10%; top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  max-width: 420px;
+  opacity: 0;
+}
+
+.s4-left .label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  color: #2ecc71;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.s4-left h2 {
+  font-family: "Syne", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.s4-left p {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.s4-terminal {
+  position: absolute;
+  right: 8%; top: 50%;
+  transform: translateY(-50%);
+  width: 480px;
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 2;
+  opacity: 0;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(249,106,0,0.06);
+}
+
+.s4-term-bar {
+  background: #1c1f26;
+  padding: 0.7rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.tdot { width: 11px; height: 11px; border-radius: 50%; }
+.tdot.r { background: #ff5f57; }
+.tdot.y { background: #febc2e; }
+.tdot.g { background: #28c840; }
+
+.s4-term-title {
+  margin-left: auto;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.3);
+}
+
+.s4-term-body {
+  padding: 1.2rem 1.4rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.9;
+}
+
+.tl { display: flex; gap: 1rem; }
+.tln { color: #2a2f3a; min-width: 18px; text-align: right; user-select: none; }
+.tkw { color: #c792ea; }
+.tfn { color: #82aaff; }
+.tstr { color: #c3e88d; }
+.tcm { color: #546e7a; font-style: italic; }
+.tok { color: #2ecc71; }
+
+/* ══════════════════════════════
+   SCENE 5 — RESULTS / PROOF
+══════════════════════════════ */
+#s5 { background: #060a0f; }
+
+.s5-bg-glow {
+  position: absolute;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(46,204,113,0.1) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  animation: glowPulse 4s ease-in-out infinite;
+}
+@keyframes glowPulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+.s5-header {
+  position: absolute;
+  top: 65px; left: 10%;
+  z-index: 2;
+  opacity: 0;
+}
+
+.s5-header .label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  color: #2ecc71;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.s5-header h2 {
+  font-family: "Syne", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.s5-metrics {
+  position: absolute;
+  top: 50%; left: 10%; right: 10%;
+  transform: translateY(-40%);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  z-index: 2;
+}
+
+.s5-metric {
+  background: rgba(22,27,36,0.8);
+  border: 1px solid rgba(46,204,113,0.15);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.85);
+  backdrop-filter: blur(10px);
+}
+
+.s5-metric-num {
+  font-family: "Syne", sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #f96a00;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.s5-metric-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════
+   SCENE 6 — CTA / CLOSE
+══════════════════════════════ */
+#s6 { background: #050810; }
+
+.s6-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(249,106,0,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 50%, rgba(46,204,113,0.07) 0%, transparent 55%);
+}
+
+.s6-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridPan 15s linear infinite;
+}
+
+.s6-content {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+  width: 80%;
+}
+
+.s6-pre {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  color: #f96a00;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  opacity: 0;
+}
+
+.s6-headline {
+  font-family: "Syne", sans-serif;
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1.05;
+  margin-bottom: 1.2rem;
+  opacity: 0;
+}
+
+.s6-headline .orange { color: #f96a00; }
+.s6-headline .green  { color: #2ecc71; }
+
+.s6-sub {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  line-height: 1.6;
+}
+
+.s6-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: linear-gradient(135deg, #ff8c00, #f96a00, #e05500);
+  color: #fff;
+  padding: 1.1rem 2.8rem;
+  border-radius: 12px;
+  font-family: "Syne", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.9);
+  box-shadow: 0 8px 40px rgba(249,106,0,0.5);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.s6-url {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.88rem;
+  color: rgba(249,106,0,0.7);
+  margin-top: 1.8rem;
+  opacity: 0;
+  letter-spacing: 0.08em;
+}
+
+.s6-contacts {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 1.5rem;
+  opacity: 0;
+}
+
+.s6-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.s6-contact-item span { color: rgba(255,255,255,0.8); }
+
+/* ══ PARTICLES LAYER ══ */
+#particleCanvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ══ SCAN LINE ══ */
+.scanline {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(249,106,0,0.4), rgba(46,204,113,0.3), transparent);
+  z-index: 3;
+  pointer-events: none;
+  animation: scanAnim 6s linear infinite;
+  opacity: 0.6;
+}
+@keyframes scanAnim {
+  0%   { top: -2px; opacity: 0; }
+  5%   { opacity: 0.6; }
+  95%  { opacity: 0.6; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ══ SUBTITLES ══ */
+#subtitle {
+  position: absolute;
+  bottom: 78px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.75);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  padding: 0.6rem 2rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.85);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  z-index: 50;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  max-width: 900px;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+#subtitle.visible { opacity: 1; }
+
+/* ══ SCENE TRANSITION FLASH ══ */
+#flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+
+/* ══ MUTE BUTTON ══ */
+#muteBtn {
+  position: absolute;
+  top: 20px; left: 24px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.75);
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  z-index: 999;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+}
+#muteBtn:hover { color: #fff; border-color: rgba(249,106,0,0.4); background: rgba(249,106,0,0.08); }
+
+/* ══ VOICE LABEL ══ */
+#voiceLabel {
+  position: absolute;
+  bottom: 68px; left: 24px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.2);
+  z-index: 999;
+  letter-spacing: 0.08em;
+}
+
+/* ══ VOICE WAVE ANIMATION (shown while speaking) ══ */
+#voiceWave {
+  position: absolute;
+  top: 18px; left: 120px;
+  display: none;
+  align-items: center;
+  gap: 3px;
+  z-index: 999;
+}
+#voiceWave.active { display: flex; }
+#voiceWave span {
+  display: block;
+  width: 3px;
+  border-radius: 3px;
+  background: #f96a00;
+  animation: waveBar 0.8s ease-in-out infinite;
+}
+#voiceWave span:nth-child(1) { height: 8px;  animation-delay: 0s; }
+#voiceWave span:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+#voiceWave span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+#voiceWave span:nth-child(4) { height: 16px; animation-delay: 0.15s; }
+#voiceWave span:nth-child(5) { height: 8px;  animation-delay: 0.05s; }
+@keyframes waveBar {
+  0%,100% { transform: scaleY(0.5); opacity: 0.5; }
+  50%      { transform: scaleY(1);   opacity: 1; }
+}
+
+/* ══ PLAY OVERLAY voice note ══ */
+#voiceNote {
+  margin-top: 1rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  color: rgba(249,106,0,0.7);
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+
+/* ══ CONTROL BAR ══ */
+#controlBar {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 8px;
+  z-index: 998;
+  background: rgba(5,8,14,0.97);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 40px;
+  padding: 6px 14px;
+}
+
+.ctrl-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: all 0.2s;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.ctrl-btn:hover { color: #fff; background: rgba(249,106,0,0.15); }
+.ctrl-btn.primary {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #f96a00, #d94f00);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 1rem;
+  padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 12px rgba(249,106,0,0.4);
+}
+.ctrl-btn.primary:hover { transform: scale(1.08); box-shadow: 0 0 22px rgba(249,106,0,0.7); }
+
+.ctrl-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255,255,255,0.12);
+  margin: 0 2px;
+}
+
+/* ══ SCENE DOTS ══ */
+#sceneDots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.scene-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s;
+  padding: 0;
+}
+.scene-dot.active {
+  background: #f96a00;
+  transform: scale(1.3);
+  box-shadow: 0 0 6px rgba(249,106,0,0.7);
+}
+.scene-dot:hover { background: rgba(249,106,0,0.6); }
+
+/* ══ PROGRESS TRACK (clickable) ══ */
+#progressTrack {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  cursor: pointer;
+  z-index: 999;
+}
+#progressTrack:hover { height: 6px; }
+#progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #f96a00, #ffd700, #2ecc71);
+  pointer-events: none;
+  transition: width 0.15s linear;
+}
+
+/* ══ VOICE WAVE ══ */
+#voiceWave {
+  display: none;
+  align-items: center;
+  gap: 2px;
+}
+#voiceWave.active { display: flex; }
+#voiceWave span {
+  display: block; width: 3px; border-radius: 3px;
+  background: #f96a00;
+  animation: waveBar 0.7s ease-in-out infinite;
+}
+#voiceWave span:nth-child(1) { height: 7px;  animation-delay: 0s; }
+#voiceWave span:nth-child(2) { height: 13px; animation-delay: 0.1s; }
+#voiceWave span:nth-child(3) { height: 9px;  animation-delay: 0.2s; }
+#voiceWave span:nth-child(4) { height: 15px; animation-delay: 0.15s; }
+#voiceWave span:nth-child(5) { height: 7px;  animation-delay: 0.05s; }
+@keyframes waveBar {
+  0%,100% { transform: scaleY(0.4); opacity: 0.5; }
+  50%      { transform: scaleY(1);   opacity: 1; }
+}
+
+/* ══ VOICE LABEL ══ */
+#voiceLabel {
+  position: absolute;
+  top: 18px; left: 50%;
+  transform: translateX(-50%);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.18);
+  z-index: 998;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* ══ SCENE INFO ══ */
+#sceneInfo {
+  position: absolute;
+  top: 18px; right: 20px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  z-index: 998;
+  letter-spacing: 0.1em;
+}
+
+/* ══ PLAY OVERLAY tweaks ══ */
+#voiceNote {
+  margin-top: 1.2rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  color: rgba(249,106,0,0.6);
+  letter-spacing: 0.06em;
+  text-align: center;
+  line-height: 1.6;
+}
+
+
+/* SCENE VISUALS */
+.code-float{position:absolute;font-family:"JetBrains Mono",monospace;font-size:0.72rem;color:rgba(46,204,113,0.35);pointer-events:none;white-space:nowrap;animation:codeRise var(--dur,12s) linear var(--del,0s) infinite}
+@keyframes codeRise{0%{transform:translateY(0) rotate(var(--rot,0deg));opacity:0}8%{opacity:1}92%{opacity:0.4}100%{transform:translateY(-720px) rotate(var(--rot,0deg));opacity:0}}
+.orbit-ring{position:absolute;border-radius:50%;border:1px solid rgba(249,106,0,0.18);top:50%;left:50%;transform:translate(-50%,-50%);animation:orbitSpin var(--spd,20s) linear infinite;pointer-events:none}
+@keyframes orbitSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.orbit-dot{position:absolute;width:8px;height:8px;border-radius:50%;background:#f96a00;box-shadow:0 0 12px rgba(249,106,0,0.8);top:-4px;left:50%;margin-left:-4px}
+.stat-bar-track{width:140px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-top:0.5rem}
+.stat-bar-fill{height:100%;background:linear-gradient(90deg,#f96a00,#ffd700);border-radius:2px;width:0%;transition:width 1.8s cubic-bezier(0.2,0.8,0.3,1)}
+.warn-float{position:absolute;font-size:1.6rem;opacity:0;animation:warnPop var(--wd,4s) ease-in-out var(--wdl,0s) infinite;pointer-events:none}
+@keyframes warnPop{0%,100%{opacity:0;transform:scale(0.5) translateY(10px)}20%,80%{opacity:0.7;transform:scale(1) translateY(0)}}
+.tech-badge{position:absolute;background:rgba(22,27,36,0.9);border:1px solid rgba(249,106,0,0.2);border-radius:8px;padding:0.4rem 0.8rem;font-family:"JetBrains Mono",monospace;font-size:0.7rem;color:rgba(255,255,255,0.6);opacity:0;animation:badgePop var(--bd,3s) ease-out var(--bdl,0s) forwards;pointer-events:none;white-space:nowrap}
+@keyframes badgePop{0%{opacity:0;transform:scale(0.5) translateY(20px)}60%{opacity:1;transform:scale(1.05) translateY(-3px)}100%{opacity:0.8;transform:scale(1) translateY(0)}}
+.result-ring{position:absolute;top:-8px;left:-8px;right:-8px;bottom:-8px;border-radius:20px;border:2px solid rgba(249,106,0,0.25);animation:ringPulse 2s ease-in-out infinite;pointer-events:none}
+@keyframes ringPulse{0%,100%{opacity:0.2;transform:scale(1)}50%{opacity:0.7;transform:scale(1.02)}}
+.chart-wrap{position:absolute;right:6%;bottom:60px;display:flex;align-items:flex-end;gap:10px;opacity:0;z-index:2}
+.chart-bar{width:28px;background:linear-gradient(180deg,#f96a00,rgba(249,106,0,0.3));border-radius:4px 4px 0 0;box-shadow:0 0 12px rgba(249,106,0,0.4);height:0;transition:height 1.2s cubic-bezier(0.2,0.8,0.3,1)}
+.cta-ring{position:absolute;border-radius:50%;border:2px solid rgba(249,106,0,0.25);pointer-events:none;animation:ctaRing var(--cr,3s) ease-out var(--crl,0s) infinite;top:50%;left:50%;transform:translate(-50%,-50%) scale(1);opacity:0}
+@keyframes ctaRing{0%{transform:translate(-50%,-50%) scale(0.8);opacity:0.8}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}}
+.proof-ticker{position:absolute;bottom:82px;left:0;right:0;overflow:hidden;opacity:0;z-index:2}
+.proof-inner{display:flex;gap:2.5rem;width:max-content;animation:tickerScroll 18s linear infinite}
+@keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.proof-chip{background:rgba(22,27,36,0.85);border:1px solid rgba(46,204,113,0.2);border-radius:100px;padding:0.4rem 1.1rem;font-size:0.72rem;color:rgba(255,255,255,0.6);white-space:nowrap;display:flex;align-items:center;gap:0.4rem}
+.proof-dot{width:7px;height:7px;border-radius:50%;background:#2ecc71;animation:pulse 2s infinite}
+#typingLine{font-family:"JetBrains Mono",monospace;font-size:0.85rem;color:rgba(46,204,113,0.7);margin-top:1rem;letter-spacing:0.05em;min-height:1.2em;opacity:0}
+.s2-visual{position:absolute;right:6%;top:50%;transform:translateY(-50%);width:160px;z-index:2;opacity:0}
+.s2-phone{width:130px;height:230px;background:#0d1117;border:2px solid rgba(255,255,255,0.1);border-radius:28px;margin:0 auto;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.7),0 0 30px rgba(249,106,0,0.1)}
+.s2-phone-notch{width:50px;height:8px;background:rgba(255,255,255,0.08);border-radius:4px;margin:12px auto 8px}
+.s2-phone-screen{padding:4px 8px;display:flex;flex-direction:column;gap:5px}
+.s2-phone-bar{height:6px;border-radius:3px;background:rgba(255,255,255,0.08)}
+.s2-phone-badge{position:absolute;top:-8px;right:-8px;background:#ff3c3c;color:#fff;width:22px;height:22px;border-radius:50%;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;animation:pulse 1.5s infinite;box-shadow:0 0 10px rgba(255,60,60,0.7)}
+.s2-label{text-align:center;margin-top:0.8rem;font-family:"JetBrains Mono",monospace;font-size:0.65rem;color:rgba(255,60,60,0.7);letter-spacing:0.08em}
+@media(max-width:768px){body{cursor:auto;}#cursorGlow,#cursorTrail{display:none!important;}}
+
+/* Credit line */
+#creditLine {
+  position: absolute;
+  bottom: 68px; left: 50%;
+  transform: translateX(-50%);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.0);
+  z-index: 997;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: color 0.5s ease;
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- Shared bg particle canvas -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Credit line -->
+  <div id="creditLine">Written &amp; Illustrated by Sipo Kupiso</div>
+
+  <!-- Scanline -->
+  <div class="scanline"></div>
+
+  <!-- Brain Circuit clickable widget -->
+  <svg id="brainCircuit" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" title="Click me!" style="position:absolute;bottom:6.5rem;right:1.2rem;width:90px;height:90px;z-index:50;cursor:pointer;filter:drop-shadow(0 0 12px rgba(46,204,113,0.5));transition:filter 0.3s,transform 0.3s">
+    <defs>
+      <radialGradient id="bG" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2ecc71" stop-opacity="0.9"/><stop offset="100%" stop-color="#00a854" stop-opacity="0.4"/></radialGradient>
+      <filter id="bF"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <g filter="url(#bF)" fill="none" stroke="url(#bG)" stroke-width="1.4">
+      <path d="M100 42 C82 22 52 32 52 57 C32 57 27 77 42 87 C27 92 32 117 52 117 C57 137 72 147 92 142 L100 162 L108 142 C128 147 143 137 148 117 C168 117 173 92 158 87 C173 77 168 57 148 57 C148 32 118 22 100 42Z"/>
+      <line x1="100" y1="52" x2="100" y2="157" stroke="rgba(46,204,113,0.35)" stroke-width="0.8"/>
+      <line x1="62" y1="82" x2="138" y2="82" stroke="rgba(46,204,113,0.35)" stroke-width="0.8"/>
+      <line x1="67" y1="102" x2="133" y2="102" stroke="rgba(46,204,113,0.28)" stroke-width="0.8"/>
+      <line x1="72" y1="122" x2="128" y2="122" stroke="rgba(46,204,113,0.28)" stroke-width="0.8"/>
+      <circle cx="100" cy="82" r="3" fill="#2ecc71" opacity="0.9"/>
+      <circle cx="72" cy="82" r="1.8" fill="#f96a00" opacity="0.8"/>
+      <circle cx="128" cy="82" r="1.8" fill="#f96a00" opacity="0.8"/>
+      <circle cx="100" cy="102" r="2.2" fill="#ffd700" opacity="0.8"/>
+      <circle cx="82" cy="102" r="1.4" fill="#2ecc71" opacity="0.7"/>
+      <circle cx="118" cy="102" r="1.4" fill="#2ecc71" opacity="0.7"/>
+      <circle cx="100" cy="122" r="1.8" fill="#f96a00" opacity="0.8"/>
+      <line x1="100" y1="82" x2="72" y2="102" stroke="rgba(249,106,0,0.3)" stroke-width="0.8"/>
+      <line x1="100" y1="82" x2="128" y2="102" stroke="rgba(249,106,0,0.3)" stroke-width="0.8"/>
+      <line x1="100" y1="102" x2="82" y2="122" stroke="rgba(255,215,0,0.25)" stroke-width="0.8"/>
+      <line x1="100" y1="102" x2="118" y2="122" stroke="rgba(255,215,0,0.25)" stroke-width="0.8"/>
+    </g>
+    <circle cx="100" cy="102" r="5" fill="#2ecc71" opacity="0.9">
+      <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="2.2" fill="#fff" opacity="0.9"><animateMotion dur="3s" repeatCount="indefinite" path="M100,52 L100,157"/></circle>
+    <circle r="1.8" fill="#ffd700" opacity="0.8"><animateMotion dur="2.5s" repeatCount="indefinite" begin="0.8s" path="M62,82 L138,82"/></circle>
+    <text x="100" y="183" text-anchor="middle" font-size="7" fill="rgba(46,204,113,0.6)" font-family="monospace">CLICK</text>
+  </svg>
+
+  <!-- Flash transition -->
+  <div id="flash"></div>
+
+  <!-- Voice wave indicator -->
+  <div id="voiceWave"><span></span><span></span><span></span><span></span><span></span></div>
+
+  <!-- Voice label -->
+  <div id="voiceLabel">detecting voice...</div>
+
+  <!-- Scene info -->
+  <div id="sceneInfo">01 / 06</div>
+
+  <!-- Progress track (clickable) -->
+  <div id="progressTrack"><div id="progressBar" style="width:0%"></div></div>
+
+  <!-- Control Bar -->
+  <div id="controlBar">
+    <button class="ctrl-btn" id="rewindBtn" title="Previous scene (← key)">&#9664;&#9664;</button>
+    <button class="ctrl-btn primary" id="playPauseBtn" title="Play / Pause (Space)">&#9646;&#9646;</button>
+    <button class="ctrl-btn" id="skipBtn" title="Next scene (→ key)">&#9654;&#9654;</button>
+    <button class="ctrl-btn" id="ffBtn" title="Fast forward (F key)" style="font-size:0.68rem;padding:4px 9px;letter-spacing:0.02em;border:1px solid rgba(255,255,255,0.12);border-radius:12px;">1&#xD7;</button>
+    <div class="ctrl-divider"></div>
+    <div id="sceneDots"></div>
+    <div class="ctrl-divider"></div>
+    <div id="voiceWaveInline" style="display:flex;align-items:center;gap:2px;margin:0 2px"></div>
+    <button class="ctrl-btn" id="voiceBtn" title="Toggle voice (V key)">🔊 VOICE</button>
+    <button class="ctrl-btn" id="musicBtn" title="Toggle music (M key)">🎵 MUSIC</button>
+  </div>
+
+
+  <!-- ══ PLAY OVERLAY ══ -->
+  <div id="playOverlay">
+    <button id="playBtn">▶</button>
+    <h2>Saporous Marketing Video</h2>
+    <p>Press play to watch · 60 seconds · Full HD</p>
+    <div id='voiceNote'>🎵 Background music plays automatically<br>🔊 Voice narration reads the script<br>⎵ Space to pause · M to mute music · V for voice</div>
+  </div>
+
+  <!-- Subtitle bar -->
+  <div id="subtitle"></div>
+
+  <!-- ══ SCENE 1 — BRAND REVEAL ══ -->
+  <div class="scene active" id="s1">
+    <div class="s1-grid"></div>
+    <div class="s1-orb a"></div>
+    <div class="s1-orb b"></div>
+    <div class="s1-logo-wrap">
+      <!-- orbiting rings -->
+    <div class="orbit-ring" style="width:320px;height:320px;--spd:18s;border-color:rgba(249,106,0,0.12)"><div class="orbit-dot"></div></div>
+    <div class="orbit-ring" style="width:480px;height:480px;--spd:28s;animation-direction:reverse;border-color:rgba(46,204,113,0.08)"><div class="orbit-dot" style="background:#2ecc71;box-shadow:0 0 12px rgba(46,204,113,0.9)"></div></div>
+    <!-- floating code lines -->
+    <div class="code-float" style="left:4%;top:72%;--dur:14s;--del:0s;--rot:-3deg">const site = buildWith(React)</div>
+    <div class="code-float" style="left:78%;top:68%;--dur:11s;--del:2s;--rot:2deg">npm run deploy &#x2713;</div>
+    <div class="code-float" style="left:12%;top:20%;--dur:16s;--del:4s;--rot:-1deg">PageSpeed: 95+ &#x2713;</div>
+    <div class="code-float" style="left:65%;top:15%;--dur:13s;--del:1s;--rot:1deg">SSL: active &#x2713;</div>
+    <div class="code-float" style="left:50%;top:82%;--dur:12s;--del:3s;--rot:-2deg">uptime: 99.9%</div>
+    <div class="code-float" style="left:88%;top:40%;--dur:15s;--del:5s;--rot:3deg">AI.train(data) &#x2713;</div>
+    <div class="s1-logo-icon" id="s1Icon">S</div>
+      <div class="s1-brand" id="s1Brand">Sap<span class="orange">orous</span></div>
+      <div class="s1-tagline" id="s1Tag">Your Trusted IT Solutions Partner</div>
+      <div id="typingLine"></div>
+      <div class="s1-url" id="s1Url">saporous-website.onrender.com</div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 2 — PROBLEM / HOOK ══ -->
+  <div class="scene" id="s2">
+    <div class="s2-bg"></div>
+    <div class="warn-float" style="left:70%;top:10%;--wd:5s;--wdl:0s;">&#x1F4C9;</div>
+    <div class="warn-float" style="left:80%;top:55%;--wd:4s;--wdl:1.2s;">&#x26A0;&#xFE0F;</div>
+    <div class="warn-float" style="left:66%;top:76%;--wd:6s;--wdl:0.6s;">&#x1F4B8;</div>
+    <div class="warn-float" style="left:58%;top:28%;--wd:4.5s;--wdl:2s;">&#x1F6AB;</div>
+    <div class="s2-content">
+      <div class="s2-eyebrow" id="s2Eye">// The Challenge Every Business Faces</div>
+      <div class="s2-headline" id="s2H">
+        Your business deserves<br>a <span class="hl">powerful</span><br>online presence.
+      </div>
+      <div class="s2-sub" id="s2Sub">
+        Nowadays, your website is your storefront, your salesperson, and your reputation — all in one. Don't let a weak digital presence cost you customers.
+      </div>
+      <div class="s2-stat-row" id="s2Stats">
+        <div>
+          <div class="s2-stat-num">81%</div>
+          <div class="s2-stat-label">of customers research<br>online before buying</div>
+          <div class="stat-bar-track"><div class="stat-bar-fill" id="bar1"></div></div>
+        </div>
+        <div>
+          <div class="s2-stat-num">3s</div>
+          <div class="s2-stat-label">before a slow site<br>loses a visitor</div>
+          <div class="stat-bar-track"><div class="stat-bar-fill" id="bar2" style="background:linear-gradient(90deg,#ff4444,#ff8800)"></div></div>
+        </div>
+        <div>
+          <div class="s2-stat-num">R0</div>
+          <div class="s2-stat-label">earned from a site<br>that doesn't convert</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 3 — SERVICES ══ -->
+  <div class="scene" id="s3">
+    <div class="s3-header" id="s3H">
+      <div class="s3-header-label">// What We Do</div>
+      <h2>Complete Digital<br>Solutions — Under One Roof</h2>
+    </div>
+    <div class="s3-cards">
+      <div class="s3-card" id="sc1">
+        <div class="s3-card-icon">🌐</div>
+        <div class="s3-card-title">Website Development</div>
+        <div class="s3-card-desc">React · Next.js · AWS · 99.9% uptime · SEO A+</div>
+      </div>
+      <div class="s3-card" id="sc2">
+        <div class="s3-card-icon">🛒</div>
+        <div class="s3-card-title">E-Commerce Stores</div>
+        <div class="s3-card-desc">Stripe · PayFast · Smart cart · Live dashboards</div>
+      </div>
+      <div class="s3-card" id="sc3">
+        <div class="s3-card-icon">📱</div>
+        <div class="s3-card-title">Mobile App Development</div>
+        <div class="s3-card-desc">iOS · Android · PWA · 60fps · Push notifications</div>
+      </div>
+      <div class="s3-card" id="sc4">
+        <div class="s3-card-icon">🎨</div>
+        <div class="s3-card-title">UI/UX Design</div>
+        <div class="s3-card-desc">Figma pixel-perfect · A/B tested · +94% CVR</div>
+      </div>
+      <div class="s3-card" id="sc5">
+        <div class="s3-card-icon">🤖</div>
+        <div class="s3-card-title">AI Integration</div>
+        <div class="s3-card-desc">Custom models · 99.2% accuracy · API-ready</div>
+      </div>
+      <div class="s3-card" id="sc6">
+        <div class="s3-card-icon">📡</div>
+        <div class="s3-card-title">SEO & Digital Marketing</div>
+        <div class="s3-card-desc">Page-1 rankings · Content strategy · Analytics</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 4 — TECH CREDIBILITY ══ -->
+  <div class="scene" id="s4">
+    <div class="tech-badge" style="top:12%;left:8%;--bd:0.8s;--bdl:1.5s;">&#x26DB; React</div>
+    <div class="tech-badge" style="top:22%;left:44%;--bd:0.8s;--bdl:2.2s;">&#x25B2; Next.js</div>
+    <div class="tech-badge" style="top:74%;left:6%;--bd:0.8s;--bdl:2.8s;">Node.js</div>
+    <div class="tech-badge" style="top:82%;left:40%;--bd:0.8s;--bdl:3.4s;">&#x2601; AWS</div>
+    <div class="tech-badge" style="top:8%;right:6%;--bd:0.8s;--bdl:4s;">&#x1F433; Docker</div>
+    <div class="tech-badge" style="top:80%;right:5%;--bd:0.8s;--bdl:4.6s;">&#x1F512; SSL/TLS</div>
+    <div class="s4-left" id="s4L">
+      <div class="label">// Built With The Best</div>
+      <h2>Enterprise-Grade<br>Technology.</h2>
+      <p>We use the same tools as Netflix, Airbnb and Shopify — brought to your South African business at an accessible price point.</p>
+    </div>
+    <div class="s4-terminal" id="s4T">
+      <div class="s4-term-bar">
+        <div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div>
+        <span class="s4-term-title">saporous-deploy.js</span>
+      </div>
+      <div class="s4-term-body">
+        <div class="tl"><span class="tln">1</span><span><span class="tkw">const</span> site = <span class="tfn">buildWith</span>({</span></div>
+        <div class="tl"><span class="tln">2</span><span>&nbsp; stack: [<span class="tstr">'React'</span>, <span class="tstr">'Next.js'</span>],</span></div>
+        <div class="tl"><span class="tln">3</span><span>&nbsp; host:  <span class="tstr">'AWS'</span>,  seo: <span class="tstr">true</span>,</span></div>
+        <div class="tl"><span class="tln">4</span><span>&nbsp; ssl:   <span class="tstr">true</span>, uptime: <span class="tstr">'99.9%'</span></span></div>
+        <div class="tl"><span class="tln">5</span><span>});</span></div>
+        <div class="tl"><span class="tln">6</span><span>&nbsp;</span></div>
+        <div class="tl"><span class="tln">7</span><span>site.<span class="tfn">deploy</span>(); <span class="tcm">// 🚀 Live!</span></span></div>
+        <div class="tl"><span class="tln">8</span><span>&nbsp;</span></div>
+        <div class="tl"><span class="tln">9</span><span><span class="tok">✓</span> PageSpeed: 95+</span></div>
+        <div class="tl"><span class="tln">10</span><span><span class="tok">✓</span> SSL Active</span></div>
+        <div class="tl"><span class="tln">11</span><span><span class="tok">✓</span> SEO Grade: A+</span></div>
+        <div class="tl"><span class="tln">12</span><span><span class="tok">✓</span> Mobile: 100/100</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 5 — RESULTS ══ -->
+  <div class="scene" id="s5">
+    <div class="s5-bg-glow"></div>
+    <div class="s5-header" id="s5H">
+      <div class="label">// Real Results. Real Impact.</div>
+      <h2>Numbers That Prove<br>We Deliver.</h2>
+    </div>
+    <div class="s5-metrics">
+      <div class="s5-metric" id="sm1"><div class="result-ring"></div>
+        <div class="s5-metric-num">99.9%</div>
+        <div class="s5-metric-label">Uptime<br>Guaranteed</div>
+      </div>
+      <div class="s5-metric" id="sm2"><div class="result-ring"></div>
+        <div class="s5-metric-num">+94%</div>
+        <div class="s5-metric-label">Conversion Rate<br>Improvement</div>
+      </div>
+      <div class="s5-metric" id="sm3"><div class="result-ring"></div>
+        <div class="s5-metric-num">95+</div>
+        <div class="s5-metric-label">Google PageSpeed<br>Score</div>
+      </div>
+      <div class="s5-metric" id="sm4"><div class="result-ring"></div>
+        <div class="s5-metric-num">50+</div>
+        <div class="s5-metric-label">Projects<br>Delivered</div>
+      </div>
+    </div>
+    <div class="chart-wrap" id="chartWrap">
+      <div class="chart-bar" id="cb1"></div>
+      <div class="chart-bar" id="cb2"></div>
+      <div class="chart-bar" id="cb3"></div>
+      <div class="chart-bar" id="cb4" style="background:linear-gradient(180deg,#f96a00,rgba(249,106,0,0.3))"></div>
+      <div class="chart-bar" id="cb5" style="background:linear-gradient(180deg,#ffd700,rgba(255,215,0,0.2))"></div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 6 — CTA ══ -->
+  <div class="scene" id="s6">
+    <div class="s6-bg"></div>
+    <div class="s6-grid"></div>
+    <div class="cta-ring" style="width:200px;height:200px;--cr:3s;--crl:0s"></div>
+    <div class="cta-ring" style="width:200px;height:200px;--cr:3s;--crl:1s;border-color:rgba(46,204,113,0.2)"></div>
+    <div class="proof-ticker" id="proofTicker">
+      <div class="proof-inner">
+        <div class="proof-chip"><div class="proof-dot"></div>Website launched for local business &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>E-commerce store generating sales 24/7 &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>Mobile app live on App Store &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>SEO ranking page 1 on Google &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>AI bot handling 78% of support &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>Website launched for local business &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>E-commerce store generating sales 24/7 &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>Mobile app live on App Store &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>SEO ranking page 1 on Google &#x2713;</div>
+        <div class="proof-chip"><div class="proof-dot"></div>AI bot handling 78% of support &#x2713;</div>
+      </div>
+    </div>
+    <div class="s6-content">
+      <div class="s6-pre" id="s6Pre">// Your Digital Future Starts Now</div>
+      <div class="s6-headline" id="s6H">
+        Let's Build<br>Something <span class="orange">Amazing</span><br><span class="green">Together.</span>
+      </div>
+      <div class="s6-sub" id="s6Sub">
+        Website · E-Commerce · Mobile Apps · AI · SEO · Design<br>
+        Professional. Fast. Affordable. South African.
+      </div>
+      <a href="https://saporous-website.onrender.com" target="_blank" class="s6-btn" id="s6Btn">
+        🚀 Get Started Today
+      </a>
+      <div class="s6-url" id="s6Url">saporous-website.onrender.com</div>
+      <div class="s6-contacts" id="s6Con">
+        <div class="s6-contact-item">📞 <span>+27 73 561 0318</span></div>
+        <div class="s6-contact-item">✉️ <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="037062736c716c7670706a736c43646e626a6f2d606c6e">[email&#160;protected]</a></span></div>
+        <div class="s6-contact-item">📍 <span>South Africa</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ END CARD ══ -->
+  <div id="endCard" style="
+    display:none; opacity:0;
+    position:absolute; inset:0; z-index:800;
+    background:rgba(5,8,16,0.94);
+    backdrop-filter:blur(18px);
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  ">
+    <!-- Glow orbs -->
+    <div style="position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(249,106,0,0.14),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none"></div>
+    <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(46,204,113,0.08),transparent 70%);bottom:60px;left:80px;pointer-events:none"></div>
+
+    <!-- Logo -->
+    <div style="
+      width:72px;height:72px;
+      background:linear-gradient(135deg,#ff8c00,#f96a00,#e05500);
+      border-radius:18px;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:#fff;
+      box-shadow:0 0 40px rgba(249,106,0,0.6),0 0 80px rgba(249,106,0,0.25);
+      margin-bottom:1.4rem;
+      animation:playPulse 3s ease-in-out infinite;
+    ">S</div>
+
+    <!-- Thank you line -->
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#f96a00;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.8rem;">
+      // Thank you for watching
+    </div>
+
+    <!-- Main headline -->
+    <h2 style="
+      font-family:'Syne',sans-serif;
+      font-size:2.8rem;font-weight:800;
+      letter-spacing:-0.03em;line-height:1.1;
+      color:#fff;margin-bottom:0.8rem;
+    ">
+      Ready to Build Your<br><span style="color:#f96a00">Digital Future?</span>
+    </h2>
+
+    <p style="font-size:0.95rem;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.7;margin-bottom:2.2rem;max-width:480px;">
+      Websites · E-Commerce · Mobile Apps · AI · SEO · Design<br>
+      Professional. Fast. Affordable. South African.
+    </p>
+
+    <!-- CTA buttons -->
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem;">
+      <a href="https://saporous-website.onrender.com" target="_blank" style="
+        display:inline-flex;align-items:center;gap:0.5rem;
+        background:linear-gradient(135deg,#ff8c00,#f96a00,#e05500);
+        color:#fff;padding:0.9rem 2.2rem;border-radius:10px;
+        font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;
+        text-decoration:none;border:none;cursor:pointer;
+        box-shadow:0 6px 30px rgba(249,106,0,0.45);
+        animation:playPulse 2.5s ease-in-out infinite;
+        letter-spacing:-0.01em;
+      ">🚀 Get Started Today</a>
+
+      <button onclick="replayVideo()" style="
+        display:inline-flex;align-items:center;gap:0.5rem;
+        background:rgba(255,255,255,0.06);
+        border:1px solid rgba(255,255,255,0.18);
+        color:#fff;padding:0.9rem 2rem;border-radius:10px;
+        font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;
+        cursor:pointer;backdrop-filter:blur(8px);
+        transition:all 0.25s;letter-spacing:-0.01em;
+      "
+      onmouseover="this.style.background='rgba(249,106,0,0.12)';this.style.borderColor='rgba(249,106,0,0.4)'"
+      onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.18)'"
+      >▶ Watch Again</button>
+    </div>
+
+    <!-- Contact row -->
+    <div style="display:flex;gap:2.5rem;flex-wrap:wrap;justify-content:center;">
+      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:rgba(255,255,255,0.4);">
+        📞 <span style="color:rgba(255,255,255,0.75)">+27 73 561 0318</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:rgba(255,255,255,0.4);">
+        ✉️ <span style="color:rgba(255,255,255,0.75)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8dfeecfde2ffe2f8fefee4fde2cdeae0ece4e1a3eee2e0">[email&#160;protected]</a></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:rgba(255,255,255,0.4);">
+        🌐 <span style="color:rgba(255,255,255,0.75)">saporous-website.onrender.com</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
+
+(function () {
+  "use strict";
+
+  /* ══════════════════════════════════════════════════════
+     MUSIC ENGINE — Web Audio API (no external files needed)
+     Generates a warm, uplifting electronic background track
+  ══════════════════════════════════════════════════════ */
+  var audioCtx    = null;
+  var musicNodes  = [];
+  var musicGain   = null;
+  var isMusicOn   = true;
+  var isVideoPaused = false;
+  var pausedAt    = 0;
+  var pauseStart  = 0;
+
+  function createAudioCtx() {
+    if (audioCtx) return;
+    audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+    musicGain = audioCtx.createGain();
+    musicGain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+    musicGain.connect(audioCtx.destination);
+    startMusic();
+  }
+
+  /* Chord progression: Am - F - C - G loop (inspirational corporate feel) */
+  function playChord(frequencies, startTime, duration, gainVal) {
+    frequencies.forEach(function (freq) {
+      var osc  = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(musicGain);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, startTime);
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(gainVal, startTime + 0.08);
+      gain.gain.setValueAtTime(gainVal, startTime + duration - 0.15);
+      gain.gain.linearRampToValueAtTime(0, startTime + duration);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+      musicNodes.push(osc);
+    });
+  }
+
+  function playPad(freq, startTime, duration) {
+    var osc  = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    var filt = audioCtx.createBiquadFilter();
+    osc.connect(filt);
+    filt.connect(gain);
+    gain.connect(musicGain);
+    osc.type = "sawtooth";
+    filt.type = "lowpass";
+    filt.frequency.setValueAtTime(800, startTime);
+    osc.frequency.setValueAtTime(freq, startTime);
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.06, startTime + 0.3);
+    gain.gain.setValueAtTime(0.06, startTime + duration - 0.5);
+    gain.gain.linearRampToValueAtTime(0, startTime + duration);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+    musicNodes.push(osc);
+  }
+
+  function playBass(freq, startTime, duration) {
+    var osc  = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(musicGain);
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(freq, startTime);
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.22, startTime + 0.05);
+    gain.gain.setValueAtTime(0.22, startTime + duration * 0.7);
+    gain.gain.linearRampToValueAtTime(0, startTime + duration);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+    musicNodes.push(osc);
+  }
+
+  function playKick(startTime) {
+    var osc  = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(musicGain);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(160, startTime);
+    osc.frequency.exponentialRampToValueAtTime(40, startTime + 0.15);
+    gain.gain.setValueAtTime(0.5, startTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+    osc.start(startTime);
+    osc.stop(startTime + 0.35);
+    musicNodes.push(osc);
+  }
+
+  function playHihat(startTime, vol) {
+    var buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.05, audioCtx.sampleRate);
+    var dat = buf.getChannelData(0);
+    for (var i = 0; i < dat.length; i++) dat[i] = (Math.random() * 2 - 1);
+    var src  = audioCtx.createBufferSource();
+    var filt = audioCtx.createBiquadFilter();
+    var gain = audioCtx.createGain();
+    src.buffer = buf;
+    src.connect(filt);
+    filt.connect(gain);
+    gain.connect(musicGain);
+    filt.type = "highpass";
+    filt.frequency.value = 7000;
+    gain.gain.setValueAtTime(vol || 0.12, startTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.05);
+    src.start(startTime);
+    musicNodes.push(src);
+  }
+
+  function scheduleBar(t, bar) {
+    /* Bar-length = 2 seconds at 120bpm (4 beats) */
+    var b = 2.0;
+    /* Chord progressions (Am=A3, F=F3, C=C3, G=G3) */
+    var chords = [
+      [220, 261.6, 329.6],   /* Am  */
+      [174.6, 220, 261.6],   /* F   */
+      [130.8, 196, 261.6],   /* C   */
+      [196, 246.9, 293.7]    /* G   */
+    ];
+    var idx = bar % 4;
+    /* Pad */
+    playPad(chords[idx][0], t, b);
+    playPad(chords[idx][1], t, b);
+    playPad(chords[idx][2], t, b);
+    /* Bass */
+    playBass(chords[idx][0] / 2, t, b * 0.45);
+    playBass(chords[idx][0] / 2, t + b * 0.5, b * 0.45);
+    /* Kick on beats 1 & 3 */
+    playKick(t);
+    playKick(t + 1.0);
+    /* Hi-hats on every beat */
+    for (var beat = 0; beat < 4; beat++) {
+      playHihat(t + beat * 0.5, 0.1);
+      /* Off-beat softer hats */
+      playHihat(t + beat * 0.5 + 0.25, 0.05);
+    }
+    /* Lead melody — simple motif */
+    var melodies = [
+      [[880,0.3],[988,0.5],[880,0.7],[784,0.9],[880,1.3],[988,1.7]],
+      [[698,0.3],[784,0.5],[698,0.9],[659,1.3]],
+      [[523,0.3],[587,0.5],[659,0.7],[523,1.1],[587,1.5]],
+      [[588,0.3],[659,0.5],[784,0.9],[659,1.3],[588,1.7]]
+    ];
+    if (bar > 0) {
+      var mel = melodies[idx];
+      mel.forEach(function (note) {
+        playChord([note[0]], t + note[1], 0.35, 0.09);
+      });
+    }
+  }
+
+  var barIndex    = 0;
+  var nextBarTime = 0;
+  var musicTimer  = null;
+
+  function scheduleMusicLoop() {
+    if (!audioCtx || !isMusicOn) return;
+    while (nextBarTime < audioCtx.currentTime + 3.0) {
+      scheduleBar(nextBarTime, barIndex);
+      nextBarTime += 2.0;
+      barIndex++;
+    }
+    musicTimer = setTimeout(scheduleMusicLoop, 500);
+  }
+
+  function startMusic() {
+    if (!audioCtx) return;
+    barIndex    = 0;
+    nextBarTime = audioCtx.currentTime + 0.1;
+    scheduleMusicLoop();
+  }
+
+  function stopMusic() {
+    clearTimeout(musicTimer);
+    musicNodes.forEach(function (n) {
+      try { n.stop(); } catch (e) {}
+    });
+    musicNodes = [];
+  }
+
+  function setMusicVolume(v) {
+    if (musicGain) musicGain.gain.setTargetAtTime(v, audioCtx.currentTime, 0.3);
+  }
+
+  function toggleMusic() {
+    if (!audioCtx) return;
+    isMusicOn = !isMusicOn;
+    var btn = document.getElementById("musicBtn");
+    if (isMusicOn) {
+      if (btn) btn.textContent = "🎵 MUSIC";
+      setMusicVolume(0.18);
+      if (!musicTimer) scheduleMusicLoop();
+    } else {
+      if (btn) btn.textContent = "🔇 MUSIC";
+      setMusicVolume(0);
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     VOICE ENGINE — Web Speech API
+  ══════════════════════════════════════════════════════ */
+  var synth      = window.speechSynthesis;
+  var voiceObj   = null;
+  var isVoiceOn  = true;
+  var voiceTimers = [];
+
+  var voiceScripts = [
+    /* Scene 1 — Brand Reveal (short and punchy) */
+    [
+      { delay: 700,  text: "Saporous." },
+      { delay: 0,    text: "Your trusted IT solutions partner." },
+      { delay: 0,    text: "Built in South Africa. Built for the world." }
+    ],
+    /* Scene 2 — Problem Hook */
+    [
+      { delay: 500,  text: "Here is the truth." },
+      { delay: 0,    text: "Your business deserves a powerful online presence." },
+      { delay: 0,    text: "In today's world, eighty one percent of customers research online before they buy." },
+      { delay: 0,    text: "Three seconds is all it takes for a slow website to lose a visitor forever." },
+      { delay: 0,    text: "Do not let a weak digital presence cost you customers." }
+    ],
+    /* Scene 3 — Services */
+    [
+      { delay: 500,  text: "Introducing Saporous. Complete digital solutions, under one roof." },
+      { delay: 0,    text: "We build blazing fast websites and revenue-ready e-commerce stores." },
+      { delay: 0,    text: "Native mobile apps, stunning UI designs, and intelligent AI integrations." },
+      { delay: 0,    text: "Plus SEO strategies that put you on page one." },
+      { delay: 0,    text: "Everything your business needs, delivered by one committed team." }
+    ],
+    /* Scene 4 — Tech */
+    [
+      { delay: 500,  text: "We build with the very best tools in the world." },
+      { delay: 0,    text: "React. Next JS. Node JS. AWS. Docker." },
+      { delay: 0,    text: "The same technology stack trusted by Netflix, Airbnb and Shopify." },
+      { delay: 0,    text: "Enterprise grade technology, at prices made for South African businesses." }
+    ],
+    /* Scene 5 — Results */
+    [
+      { delay: 500,  text: "We do not just promise results. We deliver them." },
+      { delay: 0,    text: "99.9 percent uptime." },
+      { delay: 0,    text: "Plus 94 percent conversion rate improvement." },
+      { delay: 0,    text: "95 plus Google PageSpeed scores." },
+      { delay: 0,    text: "Over 50 successful projects delivered." },
+      { delay: 0,    text: "Real numbers. Real businesses. Real growth." }
+    ],
+    /* Scene 6 — CTA */
+    [
+      { delay: 500,  text: "Your digital future starts right now." },
+      { delay: 0,    text: "Whether you need a lightning fast website, a store that sells while you sleep, or a mobile app your customers will love." },
+      { delay: 0,    text: "Saporous makes it happen." },
+      { delay: 0,    text: "Visit saporous-website dot onrender dot com." },
+      { delay: 0,    text: "Or call plus 27, 73, 561, 0318." },
+      { delay: 0,    text: "Let us build something amazing together." },
+      { delay: 0,    text: "Saporous. Your trusted IT solutions partner." }
+    ]
+  ];
+
+  function pickVoice(voices) {
+    var preferred = ["Samantha","Tessa","Karen","Moira","Google UK English Female","Google US English","Microsoft Zira","Microsoft Hazel"];
+    for (var i = 0; i < preferred.length; i++) {
+      for (var j = 0; j < voices.length; j++) {
+        if (voices[j].name.indexOf(preferred[i]) !== -1) return voices[j];
+      }
+    }
+    for (var j = 0; j < voices.length; j++) {
+      if (voices[j].lang && voices[j].lang.indexOf("en") === 0) return voices[j];
+    }
+    return voices[0] || null;
+  }
+
+  function loadVoices() {
+    var voices = synth.getVoices();
+    if (voices.length) {
+      voiceObj = pickVoice(voices);
+      var lbl = document.getElementById("voiceLabel");
+      if (lbl && voiceObj) lbl.textContent = "🎙 " + voiceObj.name;
+    }
+  }
+
+  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+  loadVoices();
+
+  /* speak() retired — utterances now built inline in speakScene() */
+
+  function speakScene(idx) {
+    voiceTimers.forEach(clearTimeout);
+    voiceTimers = [];
+    var lines = voiceScripts[idx];
+    if (!lines || lines.length === 0) return;
+
+    /* Hard-cancel anything left from previous scene, then wait a beat */
+    try { synth.cancel(); } catch(e) {}
+
+    var lineIdx = 0;
+
+    function speakNext() {
+      if (lineIdx >= lines.length) {
+        /* All lines done — advance to next scene after a short breath */
+        voiceTimers.push(setTimeout(function () {
+          if (!isVideoPaused && playing) { if(idx>=scenes.length-1){showEndCard();}else{nextScene();} }
+        }, 1200));
+        return;
+      }
+      var line = lines[lineIdx];
+      lineIdx++;
+
+      /* Wait the line's intro delay, then speak */
+      voiceTimers.push(setTimeout(function () {
+        if (!isVoiceOn) {
+          /* Voice off — still advance scene on fixed timer */
+          voiceTimers.push(setTimeout(speakNext, 8000));
+          return;
+        }
+        var utt = new SpeechSynthesisUtterance(line.text);
+        if (voiceObj) utt.voice = voiceObj;
+        utt.rate   = 0.82;
+        utt.pitch  = 1.06;
+        utt.volume = 1.0;
+        utt.lang   = voiceObj ? voiceObj.lang : "en-US";
+
+        utt.onstart = function () {
+          if (isMusicOn) setMusicVolume(0.055);
+          var wv = document.getElementById("voiceWave");
+          if (wv) wv.classList.add("active");
+        };
+
+        utt.onend = function () {
+          if (isMusicOn) setMusicVolume(0.18);
+          var wv = document.getElementById("voiceWave");
+          if (wv) wv.classList.remove("active");
+          /* Chain to next line */
+          speakNext();
+        };
+
+        utt.onerror = function () {
+          if (isMusicOn) setMusicVolume(0.18);
+          var wv = document.getElementById("voiceWave");
+          if (wv) wv.classList.remove("active");
+          /* On error, still advance */
+          voiceTimers.push(setTimeout(speakNext, 500));
+        };
+
+        try { synth.speak(utt); } catch(e) { speakNext(); }
+      }, lineIdx === 1 ? line.delay : 400));
+    }
+
+    /* Small delay after cancel before starting fresh */
+    voiceTimers.push(setTimeout(speakNext, 300));
+  }
+
+  function stopVoice() {
+    /* Clear the onend-chain timers first so speakNext won't fire */
+    voiceTimers.forEach(clearTimeout);
+    voiceTimers = [];
+    try { synth.cancel(); } catch (e) {}
+    if (isMusicOn) setMusicVolume(0.18);
+    var wv = document.getElementById("voiceWave");
+    if (wv) wv.classList.remove("active");
+  }
+
+  function toggleVoice() {
+    isVoiceOn = !isVoiceOn;
+    var btn = document.getElementById("voiceBtn");
+    if (!isVoiceOn) {
+      try { synth.pause(); } catch(e) {}
+      setTimeout(function(){ try{ synth.cancel(); }catch(e){} }, 100);
+      if (btn) btn.textContent = "🔇 VOICE";
+      if (isMusicOn) setMusicVolume(0.18);
+      var wv = document.getElementById("voiceWave");
+      if (wv) wv.classList.remove("active");
+    } else {
+      if (btn) btn.textContent = "🔊 VOICE";
+      /* Small delay so synth is fully ready */
+      setTimeout(function () { speakScene(currentScene); }, 200);
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     EASING + ANIMATION HELPERS
+  ══════════════════════════════════════════════════════ */
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function fadeIn(el, dur, delay, ty, onDone) {
+    if (!el) return;
+    el.style.opacity   = "0";
+    if (ty !== undefined) el.style.transform = "translateY(" + ty + "px)";
+    setTimeout(function () {
+      var s = performance.now();
+      function tick(ts) {
+        var p = Math.min((ts - s) / dur, 1);
+        var e = easeOut(p);
+        el.style.opacity = e;
+        if (ty !== undefined) el.style.transform = "translateY(" + (ty * (1 - e)) + "px)";
+        if (p < 1) requestAnimationFrame(tick);
+        else if (onDone) onDone();
+      }
+      requestAnimationFrame(tick);
+    }, delay || 0);
+  }
+
+  function scaleIn(el, dur, delay, fromSc, fromRot) {
+    if (!el) return;
+    el.style.opacity   = "0";
+    el.style.transform = "scale(" + (fromSc || 0.3) + ")" + (fromRot ? " rotate(" + fromRot + "deg)" : "");
+    setTimeout(function () {
+      var s = performance.now();
+      function tick(ts) {
+        var p = Math.min((ts - s) / dur, 1);
+        var e = easeOut(p);
+        var sc  = (fromSc || 0.3) + (1 - (fromSc || 0.3)) * e;
+        var rot = fromRot ? fromRot * (1 - e) : 0;
+        el.style.opacity   = e;
+        el.style.transform = "scale(" + sc + ")" + (rot ? " rotate(" + rot + "deg)" : "");
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }, delay || 0);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     SUBTITLE SYSTEM
+  ══════════════════════════════════════════════════════ */
+  var subEl    = document.getElementById("subtitle");
+  var subTimer = null;
+  function showSub(text, dur) {
+    clearTimeout(subTimer);
+    if (subEl) {
+      subEl.textContent = text;
+      subEl.classList.add("visible");
+    }
+    subTimer = setTimeout(function () {
+      if (subEl) subEl.classList.remove("visible");
+    }, dur || 4000);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     FLASH TRANSITION
+  ══════════════════════════════════════════════════════ */
+  var flashEl = document.getElementById("flash");
+  function flashTransition(cb) {
+    var s = performance.now();
+    function tick(ts) {
+      var p = (ts - s) / 300;
+      if (flashEl) flashEl.style.opacity = p < 0.5 ? p * 2 * 0.25 : (1 - p) * 2 * 0.25;
+      if (p > 0.5 && cb) { cb(); cb = null; }
+      if (p < 1) requestAnimationFrame(tick);
+      else if (flashEl) flashEl.style.opacity = 0;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     SCENE ENGINE
+  ══════════════════════════════════════════════════════ */
+  var scenes         = ["s1","s2","s3","s4","s5","s6"];
+  var sceneDurations = [9000, 10000, 12000, 11000, 10000, 14000];
+  var currentScene   = 0;
+  var sceneTimers    = [];
+  var playing        = false;
+  var totalDuration  = 66000;
+  var elapsedBeforePause = 0;
+  var playStartTime  = null;
+
+  /* Clickable scene dot navigation */
+  function buildSceneDots() {
+    var container = document.getElementById("sceneDots");
+    if (!container) return;
+    container.innerHTML = "";
+    scenes.forEach(function (id, i) {
+      var dot = document.createElement("button");
+      dot.className = "scene-dot" + (i === 0 ? " active" : "");
+      dot.setAttribute("data-idx", i);
+      dot.addEventListener("click", function () {
+        if (!playing) return;
+        goToScene(parseInt(this.getAttribute("data-idx"), 10));
+      });
+      container.appendChild(dot);
+    });
+  }
+
+  function updateDots(idx) {
+    document.querySelectorAll(".scene-dot").forEach(function (d, i) {
+      d.classList.toggle("active", i === idx);
+    });
+  }
+
+  function goToScene(idx) {
+    sceneTimers.forEach(clearTimeout);
+    sceneTimers = [];
+    stopVoice();
+    flashTransition(function () { showScene(idx); });
+  }
+
+  function showScene(idx) {
+    scenes.forEach(function (id, i) {
+      var el = document.getElementById(id);
+      if (el) el.classList.toggle("active", i === idx);
+    });
+    var info = document.getElementById("sceneInfo");
+    if (info) info.textContent = "0" + (idx + 1) + " / 0" + scenes.length;
+    currentScene = idx;
+    updateDots(idx);
+    runSceneAnimations(idx);
+    speakScene(idx);
+  }
+
+  function nextScene() {
+    if (currentScene >= scenes.length - 1) {
+      showEndCard();
+      return;
+    }
+    /* Clear timers but don't hard-cancel voice - showScene > speakScene handles it */
+    voiceTimers.forEach(clearTimeout);
+    voiceTimers = [];
+    try { synth.cancel(); } catch(e) {}
+    flashTransition(function () { showScene(currentScene + 1); });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PLAY / PAUSE
+  ══════════════════════════════════════════════════════ */
+  function pauseVideo() {
+    if (!playing || isVideoPaused) return;
+    isVideoPaused = true;
+    pauseStart = performance.now();
+    sceneTimers.forEach(clearTimeout); sceneTimers = [];
+    voiceTimers.forEach(clearTimeout); voiceTimers = [];
+    try { synth.pause(); } catch(e) {}
+    if (audioCtx && audioCtx.state === "running") audioCtx.suspend();
+    var btn = document.getElementById("playPauseBtn");
+    if (btn) { btn.textContent = "▶"; btn.title = "Resume"; }
+    var wv = document.getElementById("voiceWave"); if (wv) wv.classList.remove("active");
+    if (isMusicOn && musicGain && audioCtx) musicGain.gain.setTargetAtTime(0.18, audioCtx.currentTime, 0.1);
+  }
+
+  function resumeVideo() {
+    if (!playing || !isVideoPaused) return;
+    isVideoPaused = false;
+    elapsedBeforePause += (performance.now() - pauseStart);
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    var btn = document.getElementById("playPauseBtn");
+    if (btn) { btn.textContent = "⏸"; btn.title = "Pause"; }
+    voiceTimers.push(setTimeout(function() {
+      try { synth.cancel(); } catch(e) {}
+      setTimeout(function() { if (!isVideoPaused) speakScene(currentScene); }, 180);
+    }, 100));
+  }
+
+  function togglePlayPause() {
+    if (isVideoPaused) resumeVideo();
+    else pauseVideo();
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PROGRESS BAR (click to scrub scenes)
+  ══════════════════════════════════════════════════════ */
+  var progressBar = document.getElementById("progressBar");
+  var progressTrack = document.getElementById("progressTrack");
+
+  if (progressTrack) {
+    progressTrack.addEventListener("click", function (e) {
+      if (!playing) return;
+      var rect = progressTrack.getBoundingClientRect();
+      var pct  = (e.clientX - rect.left) / rect.width;
+      var targetScene = Math.min(Math.floor(pct * scenes.length), scenes.length - 1);
+      goToScene(targetScene);
+    });
+  }
+
+  function updateProgress() {
+    if (!playing || !playStartTime) return;
+    if (!isVideoPaused) {
+      var elapsed = (performance.now() - playStartTime) - elapsedBeforePause;
+      var pct = Math.min(elapsed / totalDuration * 100, 100);
+      if (progressBar) progressBar.style.width = pct + "%";
+    }
+    requestAnimationFrame(updateProgress);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     SCENE ANIMATIONS
+  ══════════════════════════════════════════════════════ */
+  function runSceneAnimations(idx) {
+    sceneTimers.forEach(clearTimeout);
+    sceneTimers = [];
+    function t(fn, delay) {
+      sceneTimers.push(setTimeout(function () {
+        if (!isVideoPaused) fn();
+      }, delay));
+    }
+
+    if (idx === 0) {
+      showSub("Welcome to Saporous — South Africa's trusted IT solutions partner.", 8000);
+      scaleIn(document.getElementById("s1Icon"), 700, 200, 0.3, -15);
+      fadeIn(document.getElementById("s1Brand"), 800, 600, 30);
+      fadeIn(document.getElementById("s1Tag"),   700, 1100, 20);
+      fadeIn(document.getElementById("s1Url"),   600, 1700, 15);
+      /* Scene advances when voice finishes */
+    }
+    else if (idx === 1) {
+      showSub("81% of customers research online before buying. Don't lose them to a weak site.", 7000);
+      fadeIn(document.getElementById("s2Eye"),   600, 100, 15);
+      fadeIn(document.getElementById("s2H"),     800, 400, 30);
+      fadeIn(document.getElementById("s2Sub"),   700, 1000, 20);
+      fadeIn(document.getElementById("s2Stats"), 700, 1800, 20);
+      t(function () { showSub("3 seconds is all it takes for a slow site to lose a visitor — forever.", 5000); }, 5500);
+      /* Scene advances when voice finishes */
+    }
+    else if (idx === 2) {
+      showSub("Complete digital solutions — websites, apps, AI, and marketing — under one roof.", 7000);
+      fadeIn(document.getElementById("s3H"), 700, 100, 20);
+      ["sc1","sc2","sc3","sc4","sc5","sc6"].forEach(function (id, i) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.style.opacity   = "0";
+        el.style.transform = "translateY(40px)";
+        setTimeout(function () {
+          var s = performance.now();
+          function tick(ts) {
+            var p = Math.min((ts - s) / 600, 1), e = easeOut(p);
+            el.style.opacity   = e;
+            el.style.transform = "translateY(" + (40 * (1 - e)) + "px)";
+            if (p < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }, 500 + i * 200);
+      });
+      t(function () { showSub("Website Dev · E-Commerce · Mobile Apps · UI/UX · AI · SEO & Marketing.", 5000); }, 4000);
+      /* Scene advances when voice finishes */
+    }
+    else if (idx === 3) {
+      showSub("The same tech stack as Netflix, Airbnb and Shopify — at South African prices.", 7000);
+      fadeIn(document.getElementById("s4L"), 800, 100, 30);
+      var term = document.getElementById("s4T");
+      if (term) {
+        term.style.opacity   = "0";
+        term.style.transform = "translateY(-50%) translateX(40px)";
+        setTimeout(function () {
+          var s = performance.now();
+          function tick(ts) {
+            var p = Math.min((ts - s) / 800, 1), e = easeOut(p);
+            term.style.opacity   = e;
+            term.style.transform = "translateY(-50%) translateX(" + (40 * (1 - e)) + "px)";
+            if (p < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }, 600);
+      }
+      t(function () { showSub("React · Next.js · Node.js · AWS · Docker — PageSpeed 95+ · SEO A+ · 99.9% uptime.", 6000); }, 4500);
+      /* Scene advances when voice finishes */
+    }
+    else if (idx === 4) {
+      showSub("We don't just promise results — we deliver them. Every single time.", 6000);
+      fadeIn(document.getElementById("s5H"), 700, 100, 20);
+      ["sm1","sm2","sm3","sm4"].forEach(function (id, i) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.style.opacity   = "0";
+        el.style.transform = "scale(0.85)";
+        setTimeout(function () {
+          var s = performance.now();
+          function tick(ts) {
+            var p = Math.min((ts - s) / 700, 1), e = easeOut(p);
+            el.style.opacity   = e;
+            el.style.transform = "scale(" + (0.85 + 0.15 * e) + ")";
+            if (p < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }, 400 + i * 250);
+      });
+      t(function () { showSub("99.9% uptime · +94% CVR · 95+ PageSpeed · 50+ projects delivered.", 6000); }, 3500);
+      /* Scene advances when voice finishes */
+    }
+    else if (idx === 5) {
+      showSub("Your digital future starts right now — let's build something amazing together.", 8000);
+      fadeIn(document.getElementById("s6Pre"), 600, 100,  10);
+      fadeIn(document.getElementById("s6H"),   900, 400,  30);
+      fadeIn(document.getElementById("s6Sub"), 700, 1000, 20);
+      scaleIn(document.getElementById("s6Btn"), 700, 1600, 0.85, 0);
+      fadeIn(document.getElementById("s6Url"), 600, 2200, 10);
+      fadeIn(document.getElementById("s6Con"), 600, 2600, 10);
+      var btn = document.getElementById("s6Btn");
+      if (btn) btn.style.animation = "playPulse 2.5s ease-in-out infinite";
+      t(function () {
+        showSub("saporous-website.onrender.com · +27 73 561 0318 · saporoussipo@gmail.com", 12000);
+      }, 7500);
+      /* Loop back to start after last scene */
+      /* Scene loops back when voice finishes */
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PARTICLES
+  ══════════════════════════════════════════════════════ */
+  function showEndCard() {
+    playing=false; isVideoPaused=false;
+    sceneTimers.forEach(clearTimeout); sceneTimers=[];
+    voiceTimers.forEach(clearTimeout); voiceTimers=[];
+    try{synth.cancel();}catch(e){}
+    if(isMusicOn&&audioCtx&&musicGain) musicGain.gain.setTargetAtTime(0.18,audioCtx.currentTime,0.05);
+    setTimeout(function(){
+      var steps=80,stepMs=5000/steps,step=0;
+      function fo(){
+        if(!audioCtx||!musicGain)return;
+        if(step>=steps){musicGain.gain.setTargetAtTime(0,audioCtx.currentTime,0.05);clearTimeout(musicTimer);musicNodes.forEach(function(n){try{n.stop();}catch(e){}});musicNodes=[];return;}
+        musicGain.gain.setTargetAtTime(0.18*(1-step/steps),audioCtx.currentTime,0.05);step++;setTimeout(fo,stepMs);
+      }fo();
+    },5000);
+    var ec=document.getElementById("endCard");
+    if(!ec)return;
+    ec.style.display="flex";
+    var s=performance.now();
+    (function fade(ts){var p=Math.min((ts-s)/900,1);ec.style.opacity=p;if(p<1)requestAnimationFrame(fade);})(performance.now());
+    var ppBtn=document.getElementById("playPauseBtn");
+    if(ppBtn){ppBtn.textContent="Play Again";ppBtn.title="Play Again";}
+  }
+
+  function replayVideo(){
+    var ec=document.getElementById("endCard");
+    if(ec){ec.style.opacity="0";ec.style.display="none";}
+    playing=true;isVideoPaused=false;elapsedBeforePause=0;playStartTime=performance.now();
+    var ppBtn=document.getElementById("playPauseBtn");
+    if(ppBtn){ppBtn.textContent="||";ppBtn.title="Pause";}
+    var pb=document.getElementById("progressBar");if(pb)pb.style.width="0%";
+    isMusicOn=true;
+    var mBtn=document.getElementById("musicBtn");if(mBtn)mBtn.textContent="MUSIC ON";
+    if(audioCtx&&musicGain){
+      clearTimeout(musicTimer);musicNodes.forEach(function(n){try{n.stop();}catch(e){}});
+      musicNodes=[];barIndex=0;nextBarTime=audioCtx.currentTime+0.1;
+      musicGain.gain.setTargetAtTime(0.18,audioCtx.currentTime,0.1);scheduleMusicLoop();
+    }
+    goToScene(0);updateProgress();
+  }
+
+    (function () {
+    var canvas = document.getElementById("particleCanvas");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+    var W = 1280, H = 720;
+    canvas.width = W; canvas.height = H;
+    var cols = ["#f96a00","#2ecc71","#ffd700","rgba(255,255,255,0.5)"];
+    var pts  = [];
+    for (var i = 0; i < 60; i++) {
+      pts.push({ x: Math.random()*W, y: Math.random()*H,
+        vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+        r: Math.random()*1.8+0.4, col: cols[Math.floor(Math.random()*cols.length)], a: Math.random()*0.5+0.2 });
+    }
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i];
+        if (!isVideoPaused) { p.x += p.vx; p.y += p.vy; }
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = p.col; ctx.globalAlpha = p.a; ctx.fill();
+        for (var j = i+1; j < pts.length; j++) {
+          var q = pts[j], dx = p.x-q.x, dy = p.y-q.y, d = Math.sqrt(dx*dx+dy*dy);
+          if (d < 100) {
+            ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+            ctx.strokeStyle = p.col; ctx.globalAlpha = 0.08*(1-d/100); ctx.lineWidth=0.5; ctx.stroke();
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  /* ══════════════════════════════════════════════════════
+     CONTROLS
+  ══════════════════════════════════════════════════════ */
+  function scaleStage(){var s=document.getElementById("stage");if(!s)return;s.style.transform="scale("+Math.min(window.innerWidth/1280,window.innerHeight/720)+")";}
+  scaleStage();
+  window.addEventListener("resize",scaleStage);
+  var stEl=document.getElementById("stage");if(stEl)stEl.addEventListener("touchstart",function(){if(!playing)return;var ec=document.getElementById("endCard");if(ec&&ec.style.display==="flex"){replayVideo();return;}togglePlayPause();},{passive:true});
+
+    document.getElementById("playBtn").addEventListener("click", function () {
+    createAudioCtx();
+    loadVoices();
+    document.getElementById("playOverlay").style.display = "none";
+    var bar = document.getElementById("controlBar");
+    if (bar) bar.style.display = "flex";
+    var cred = document.getElementById("creditLine");
+    if (cred) cred.style.color = "rgba(255,255,255,0.22)";
+
+    playing       = true;
+    playStartTime = performance.now();
+    elapsedBeforePause = 0;
+    buildSceneDots();
+    showScene(0);
+    updateProgress();
+  });
+
+  /* Play/Pause */
+  var ppBtn = document.getElementById("playPauseBtn");
+  if (ppBtn) ppBtn.addEventListener("click", function(){var ec=document.getElementById("endCard");if(ec&&ec.style.display==="flex"){replayVideo();}else{togglePlayPause();}});
+
+  /* Voice toggle */
+  var vBtn = document.getElementById("voiceBtn");
+  if (vBtn) vBtn.addEventListener("click", toggleVoice);
+
+  /* Music toggle */
+  var mBtn = document.getElementById("musicBtn");
+  if (mBtn) mBtn.addEventListener("click", toggleMusic);
+
+  /* Skip forward */
+  var skipBtn = document.getElementById("skipBtn");
+  if (skipBtn) {
+    skipBtn.addEventListener("click", function () {
+      if (isVideoPaused) resumeVideo();
+      goToScene(currentScene < scenes.length - 1 ? currentScene + 1 : 0);
+    });
+  }
+
+  /* Rewind */
+  var rwBtn = document.getElementById("rewindBtn");
+  if (rwBtn) {
+    rwBtn.addEventListener("click", function () {
+      if (isVideoPaused) resumeVideo();
+      goToScene(currentScene > 0 ? currentScene - 1 : 0);
+    });
+  }
+
+  /* ── FAST FORWARD ── */
+  var ffSpeed  = 1;
+  var ffCycle  = [1, 1.5, 2, 3];
+  var ffCycleI = 0;
+  var ffBtnEl  = document.getElementById("ffBtn");
+
+  function cycleFastForward() {
+    ffCycleI = (ffCycleI + 1) % ffCycle.length;
+    ffSpeed  = ffCycle[ffCycleI];
+    if (ffBtnEl) {
+      ffBtnEl.textContent = ffSpeed + "×";
+      ffBtnEl.style.color = ffSpeed > 1 ? "#f96a00" : "rgba(255,255,255,0.7)";
+      ffBtnEl.style.borderColor = ffSpeed > 1 ? "rgba(249,106,0,0.5)" : "rgba(255,255,255,0.12)";
+    }
+    /* Restart current scene voice at new speed */
+    if (!isVideoPaused && playing && isVoiceOn) {
+      voiceTimers.forEach(clearTimeout); voiceTimers = [];
+      try { synth.cancel(); } catch(e) {}
+      setTimeout(function() { speakScene(currentScene); }, 150);
+    }
+    /* Boost/reduce music during fast-forward */
+    if (musicGain && audioCtx && isMusicOn) {
+      var vol = ffSpeed >= 2 ? 0.09 : (ffSpeed > 1 ? 0.12 : 0.18);
+      musicGain.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.3);
+    }
+  }
+
+  if (ffBtnEl) ffBtnEl.addEventListener("click", cycleFastForward);
+
+  /* Patch SpeechSynthesisUtterance rate to use ffSpeed */
+  var _NativeUtt = window.SpeechSynthesisUtterance;
+  function PatchedUtt(text) {
+    var utt = new _NativeUtt(text || "");
+    var _storedRate = 0.82;
+    Object.defineProperty(utt, "rate", {
+      get: function() { return _storedRate; },
+      set: function(v) { _storedRate = v * ffSpeed; },
+      configurable: true
+    });
+    return utt;
+  }
+  PatchedUtt.prototype = _NativeUtt.prototype;
+  window.SpeechSynthesisUtterance = PatchedUtt;
+
+  /* ── KEYBOARD SHORTCUTS ── */
+    /* ── BRAIN CIRCUIT CLICK RIPPLE ── */
+  (function() {
+    var brainEl = document.getElementById("brainCircuit");
+    if (!brainEl) return;
+    brainEl.addEventListener("click", function() {
+      var stage = document.getElementById("stage");
+      if (!stage) return;
+      var rect=brainEl.getBoundingClientRect(), stRect=stage.getBoundingClientRect();
+      var scale=parseFloat(stage.style.transform.replace("scale(","").replace(")",""))||1;
+      var cx=(rect.left+rect.width/2-stRect.left)/scale;
+      var cy=(rect.top+rect.height/2-stRect.top)/scale;
+      ["","r2","r3"].forEach(function(cls){
+        var ring=document.createElement("div");
+        ring.className="ripple-wave"+(cls?" "+cls:"");
+        ring.style.cssText="position:absolute;left:"+cx+"px;top:"+cy+"px;z-index:9998;pointer-events:none;";
+        stage.appendChild(ring);
+        setTimeout(function(){if(ring.parentNode)ring.parentNode.removeChild(ring);},1700);
+      });
+    });
+    brainEl.addEventListener("mouseenter",function(){brainEl.style.filter="drop-shadow(0 0 22px rgba(46,204,113,0.9))";brainEl.style.transform="scale(1.08)";});
+    brainEl.addEventListener("mouseleave",function(){brainEl.style.filter="drop-shadow(0 0 12px rgba(46,204,113,0.5))";brainEl.style.transform="scale(1)";});
+  })();
+
+  document.addEventListener("keydown", function (e) {
+    if (!playing) return;
+    if (e.key === " ") { e.preventDefault(); togglePlayPause(); }
+    if (e.key === "ArrowRight") { e.preventDefault(); goToScene(Math.min(currentScene+1, scenes.length-1)); }
+    if (e.key === "ArrowLeft")  { e.preventDefault(); goToScene(Math.max(currentScene-1, 0)); }
+    if (e.key === "m" || e.key === "M") toggleMusic();
+    if (e.key === "v" || e.key === "V") toggleVoice();
+    if (e.key === "f" || e.key === "F") cycleFastForward();
+  });
+
+})();
+
+
+
+</script>
+</body>
+</html>
