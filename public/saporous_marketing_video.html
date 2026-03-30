@@ -652,24 +652,27 @@ body {
 
 /* ══ SUBTITLES ══ */
 #subtitle {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: #0a0a0a;
-  border-top: 1px solid rgba(255,140,0,0.25);
-  padding: 0.7rem 2rem;
-  font-size: 0.92rem;
-  color: rgba(255,255,255,0.9);
+  position: absolute;
+  bottom: 62px;
+  left: 20px;
+  width: 48%;
+  max-width: 560px;
+  background: rgba(5, 8, 14, 0.95);
+  border: 1px solid rgba(255, 140, 0, 0.2);
+  border-radius: 10px;
+  padding: 0.75rem 1.2rem;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.92);
   font-weight: 300;
   letter-spacing: 0.02em;
   z-index: 200;
-  text-align: center;
+  text-align: left;
   opacity: 0;
   transition: opacity 0.4s ease;
-  max-width: 100%;
-  line-height: 1.5;
+  line-height: 1.55;
   box-sizing: border-box;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 #subtitle.visible { opacity: 1; }
@@ -934,6 +937,90 @@ body {
 .s2-phone-badge{position:absolute;top:-8px;right:-8px;background:#ff3c3c;color:#fff;width:22px;height:22px;border-radius:50%;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;animation:pulse 1.5s infinite;box-shadow:0 0 10px rgba(255,60,60,0.7)}
 .s2-label{text-align:center;margin-top:0.8rem;font-family:"JetBrains Mono",monospace;font-size:0.65rem;color:rgba(255,60,60,0.7);letter-spacing:0.08em}
 @media(max-width:768px){body{cursor:auto;}#cursorGlow,#cursorTrail{display:none!important;}}
+
+/* ══ MOBILE OVERRIDES (applied via .mobile class on #stage) ══ */
+#stage.mobile .s1-brand { font-size: 11rem; }
+#stage.mobile .s1-tagline { font-size: 2.6rem; letter-spacing: 0.08em; }
+#stage.mobile .s1-url { font-size: 2rem; }
+#stage.mobile .s1-logo-icon { width: 160px; height: 160px; font-size: 5rem; border-radius: 36px; }
+#stage.mobile #typingLine { font-size: 2rem; }
+
+#stage.mobile .s2-eyebrow { font-size: 1.8rem; }
+#stage.mobile .s2-headline { font-size: 6rem; }
+#stage.mobile .s2-sub { font-size: 2.4rem; line-height: 1.5; }
+#stage.mobile .s2-stat-num { font-size: 5rem; }
+#stage.mobile .s2-stat-label { font-size: 1.8rem; }
+
+#stage.mobile .s3-header-label { font-size: 1.8rem; }
+#stage.mobile .s3-header h2 { font-size: 5rem; }
+#stage.mobile .s3-card-title { font-size: 2.2rem; }
+#stage.mobile .s3-card-desc { font-size: 1.8rem; }
+#stage.mobile .s3-card-icon { font-size: 3.5rem; }
+#stage.mobile .s3-cards { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+#stage.mobile .s4-left .label { font-size: 1.8rem; }
+#stage.mobile .s4-left h2 { font-size: 5rem; }
+#stage.mobile .s4-left p { font-size: 2.2rem; }
+#stage.mobile .s4-term-body { font-size: 1.6rem; }
+#stage.mobile .s4-term-title { font-size: 1.4rem; }
+#stage.mobile .tech-badge { font-size: 1.6rem; padding: 0.8rem 1.4rem; border-radius: 12px; }
+
+#stage.mobile .s5-header .label { font-size: 1.8rem; }
+#stage.mobile .s5-header h2 { font-size: 5rem; }
+#stage.mobile .s5-metric-num { font-size: 5rem; }
+#stage.mobile .s5-metric-label { font-size: 1.8rem; }
+
+#stage.mobile .s6-pre { font-size: 1.8rem; }
+#stage.mobile .s6-headline { font-size: 7rem; }
+#stage.mobile .s6-sub { font-size: 2.4rem; }
+#stage.mobile .s6-btn { font-size: 2.4rem; padding: 1.8rem 4rem; border-radius: 18px; }
+#stage.mobile .s6-url { font-size: 2rem; }
+#stage.mobile .s6-contact-item { font-size: 2rem; }
+
+#stage.mobile .code-float { font-size: 1.6rem; }
+#stage.mobile .proof-chip { font-size: 1.6rem; padding: 0.7rem 1.6rem; }
+
+#stage.mobile #subtitle {
+  bottom: 80px;
+  left: 16px;
+  width: 60%;
+  font-size: 2.2rem;
+  padding: 1.2rem 1.6rem;
+  border-radius: 14px;
+  line-height: 1.5;
+}
+
+#stage.mobile #controlBar {
+  padding: 10px 20px;
+  gap: 14px;
+  border-radius: 50px;
+  bottom: 16px;
+}
+#stage.mobile .ctrl-btn {
+  font-size: 2rem;
+  padding: 10px 18px;
+  border-radius: 28px;
+}
+#stage.mobile .ctrl-btn.primary {
+  width: 60px; height: 60px;
+  font-size: 2rem;
+}
+#stage.mobile .scene-dot {
+  width: 14px; height: 14px;
+}
+#stage.mobile #sceneInfo { font-size: 1.8rem; }
+#stage.mobile #voiceLabel { font-size: 1.6rem; }
+#stage.mobile #creditLine { font-size: 1.4rem; }
+
+#stage.mobile #playOverlay h2 { font-size: 3rem; }
+#stage.mobile #playOverlay p { font-size: 1.8rem; }
+#stage.mobile #playBtn { width: 160px; height: 160px; font-size: 4.5rem; }
+#stage.mobile #voiceNote { font-size: 1.6rem; }
+
+/* End card mobile */
+#stage.mobile #endCard h2 { font-size: 5rem !important; }
+#stage.mobile #endCard p { font-size: 2.2rem !important; }
+#stage.mobile #endCard a, #stage.mobile #endCard button { font-size: 2.2rem !important; padding: 1.4rem 3rem !important; }
 
 /* Credit line */
 #creditLine {
@@ -1659,7 +1746,7 @@ body {
         }
         var utt = new SpeechSynthesisUtterance(line.text);
         if (voiceObj) utt.voice = voiceObj;
-        utt.rate   = 0.88;
+        utt.rate   = Math.min(0.88 * ffSpeed, 3);
         utt.pitch  = 1.1;
         utt.volume = 1.0;
         utt.lang   = voiceObj ? voiceObj.lang : "en-US";
@@ -2117,10 +2204,39 @@ body {
   /* ══════════════════════════════════════════════════════
      CONTROLS
   ══════════════════════════════════════════════════════ */
-  function scaleStage(){var s=document.getElementById("stage");if(!s)return;s.style.transform="scale("+Math.min(window.innerWidth/1280,window.innerHeight/720)+")";}
+  function scaleStage(){
+    var s=document.getElementById("stage");if(!s)return;
+    var isMobile = window.innerWidth < 768;
+    var scale = Math.min(window.innerWidth/1280, window.innerHeight/720);
+    if (isMobile) {
+      scale = window.innerWidth / 1280;
+      s.style.transformOrigin = "top left";
+      s.classList.add("mobile");
+      document.body.style.alignItems = "flex-start";
+      document.body.style.justifyContent = "flex-start";
+    } else {
+      s.style.transformOrigin = "center center";
+      s.classList.remove("mobile");
+      document.body.style.alignItems = "center";
+      document.body.style.justifyContent = "center";
+    }
+    s.style.transform = "scale(" + scale + ")";
+  }
   scaleStage();
   window.addEventListener("resize",scaleStage);
-  var stEl=document.getElementById("stage");if(stEl)stEl.addEventListener("touchstart",function(){if(!playing)return;var ec=document.getElementById("endCard");if(ec&&ec.style.display==="flex"){replayVideo();return;}togglePlayPause();},{passive:true});
+  var stEl=document.getElementById("stage");
+  if(stEl) stEl.addEventListener("touchstart",function(e){
+    if(!playing) return;
+    var controlBar = document.getElementById("controlBar");
+    if(controlBar && controlBar.contains(e.target)) return;
+    var playOverlay = document.getElementById("playOverlay");
+    if(playOverlay && playOverlay.contains(e.target)) return;
+    var endCardEl = document.getElementById("endCard");
+    if(endCardEl && endCardEl.contains(e.target)) return;
+    var ec=document.getElementById("endCard");
+    if(ec&&ec.style.display==="flex"){replayVideo();return;}
+    togglePlayPause();
+  },{passive:true});
 
     document.getElementById("playBtn").addEventListener("click", function () {
     createAudioCtx();
@@ -2198,20 +2314,7 @@ body {
 
   if (ffBtnEl) ffBtnEl.addEventListener("click", cycleFastForward);
 
-  /* Patch SpeechSynthesisUtterance rate to use ffSpeed */
-  var _NativeUtt = window.SpeechSynthesisUtterance;
-  function PatchedUtt(text) {
-    var utt = new _NativeUtt(text || "");
-    var _storedRate = 0.82;
-    Object.defineProperty(utt, "rate", {
-      get: function() { return _storedRate; },
-      set: function(v) { _storedRate = v * ffSpeed; },
-      configurable: true
-    });
-    return utt;
-  }
-  PatchedUtt.prototype = _NativeUtt.prototype;
-  window.SpeechSynthesisUtterance = PatchedUtt;
+  /* Fast-forward speed is applied directly in speakScene via ffSpeed */
 
   /* ── KEYBOARD SHORTCUTS ── */
     /* ── BRAIN CIRCUIT CLICK RIPPLE ── */
