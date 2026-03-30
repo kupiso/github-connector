@@ -2347,6 +2347,13 @@ body {
       var stage = document.getElementById("stage");
       if (!stage) return;
       stage.style.cssText = "";
+      /* Reset control bar, scene info, subtitle */
+      var cb = document.getElementById("controlBar");
+      if (cb) cb.style.cssText = "";
+      var si = document.getElementById("sceneInfo");
+      if (si) si.style.cssText = "";
+      var sub = document.getElementById("subtitle");
+      if (sub) sub.style.cssText = "";
       unlockOrientation();
       scaleStage();
     }
