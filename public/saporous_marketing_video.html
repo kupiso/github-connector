@@ -2306,32 +2306,78 @@ body {
   /* ── FULLSCREEN ── */
   var fsBtn = document.getElementById("fullscreenBtn");
   if (fsBtn) {
+    /* Lock to landscape if Screen Orientation API is available */
+    function tryLockLandscape() {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock("landscape").catch(function(){});
+      }
+    }
+    function unlockOrientation() {
+      if (screen.orientation && screen.orientation.unlock) {
+        screen.orientation.unlock();
+      }
+    }
+
     fsBtn.addEventListener("click", function () {
       var stage = document.getElementById("stage");
       if (!stage) return;
       var doc = document;
       var isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
       if (isFs) {
+        unlockOrientation();
         (doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen).call(doc);
       } else {
         var fn = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.mozRequestFullScreen || stage.msRequestFullscreen;
-        if (fn) fn.call(stage);
+        if (fn) {
+          var p = fn.call(stage);
+          if (p && p.then) p.then(tryLockLandscape);
+          else setTimeout(tryLockLandscape, 300);
+        }
       }
     });
+
     function onFsChange() {
       var doc = document;
       var isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
-      fsBtn.textContent = isFs ? "⛶" : "⛶";
+      fsBtn.textContent = isFs ? "✕" : "⛶";
       fsBtn.style.color = isFs ? "#f96a00" : "";
+      var stage = document.getElementById("stage");
       if (isFs) {
-        /* In fullscreen, rescale stage to fill screen */
-        var stage = document.getElementById("stage");
+        /* In fullscreen, fill viewport — detect if we need to rotate */
         if (stage) {
-          var scale = Math.min(screen.width / 1280, screen.height / 720);
-          stage.style.transform = "scale(" + scale + ")";
-          stage.style.transformOrigin = "center center";
+          var sw = screen.width, sh = screen.height;
+          /* On portrait phones that didn't orientation-lock, rotate the stage */
+          var isPortrait = window.innerHeight > window.innerWidth;
+          if (isPortrait) {
+            /* Rotate 90deg so 1280 maps to screen height, 720 to screen width */
+            var scaleVal = Math.min(window.innerWidth / 720, window.innerHeight / 1280);
+            stage.style.transform = "rotate(90deg) scale(" + scaleVal + ")";
+            stage.style.transformOrigin = "center center";
+            stage.style.position = "fixed";
+            stage.style.top = "50%";
+            stage.style.left = "50%";
+            stage.style.marginTop = "-360px";
+            stage.style.marginLeft = "-640px";
+          } else {
+            var scaleVal = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+            stage.style.transform = "scale(" + scaleVal + ")";
+            stage.style.transformOrigin = "center center";
+            stage.style.position = "fixed";
+            stage.style.top = "50%";
+            stage.style.left = "50%";
+            stage.style.marginTop = "-360px";
+            stage.style.marginLeft = "-640px";
+          }
         }
       } else {
+        unlockOrientation();
+        if (stage) {
+          stage.style.position = "";
+          stage.style.top = "";
+          stage.style.left = "";
+          stage.style.marginTop = "";
+          stage.style.marginLeft = "";
+        }
         scaleStage();
       }
     }
