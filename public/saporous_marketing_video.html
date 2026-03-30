@@ -679,11 +679,14 @@ body {
 #subtitle.visible {
   opacity: 1;
   animation: subtitleSlideIn 0.45s cubic-bezier(0.22,1,0.36,1) both;
+  border-color: rgba(255, 140, 0, 0.45);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 18px rgba(249,106,0,0.15), 0 0 0 1px rgba(249,106,0,0.12);
 }
 
 @keyframes subtitleSlideIn {
-  from { opacity: 0; transform: translateY(10px) scale(0.97); filter: blur(4px); }
-  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  0%   { opacity: 0; transform: translateY(10px) scale(0.97); filter: blur(4px); border-color: rgba(255,140,0,0); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  60%  { border-color: rgba(255,140,0,0.55); box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 24px rgba(249,106,0,0.25); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); border-color: rgba(255,140,0,0.35); box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 14px rgba(249,106,0,0.12); }
 }
 
 /* ══ SCENE TRANSITION FLASH ══ */
