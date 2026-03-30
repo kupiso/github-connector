@@ -1142,6 +1142,8 @@ body {
     <div id="voiceWaveInline" style="display:flex;align-items:center;gap:2px;margin:0 2px"></div>
     <button class="ctrl-btn" id="voiceBtn" title="Toggle voice (V key)">🔊 VOICE</button>
     <button class="ctrl-btn" id="musicBtn" title="Toggle music (M key)">🎵 MUSIC</button>
+    <div class="ctrl-divider"></div>
+    <button class="ctrl-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
   </div>
 
 
@@ -1473,12 +1475,28 @@ body {
   var pauseStart  = 0;
 
   function createAudioCtx() {
-    if (audioCtx) return;
-    audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx) {
+      /* Resume suspended context on repeat interactions (mobile requirement) */
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume().catch(function(){});
+      }
+      return;
+    }
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) {
+      console.warn("AudioContext not supported");
+      return;
+    }
     musicGain = audioCtx.createGain();
     musicGain.gain.setValueAtTime(0.32, audioCtx.currentTime);
     musicGain.connect(audioCtx.destination);
-    startMusic();
+    /* Mobile browsers start AudioContext suspended — must resume after user gesture */
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume().then(function() { startMusic(); }).catch(function(){ startMusic(); });
+    } else {
+      startMusic();
+    }
   }
 
   /* Chord progression: Am - F - C - G loop (inspirational corporate feel) */
@@ -2264,6 +2282,13 @@ body {
     document.getElementById("playBtn").addEventListener("click", function () {
     createAudioCtx();
     loadVoices();
+    /* iOS/Safari: also try to unlock speech synthesis with a silent utterance */
+    try {
+      var silentUtt = new SpeechSynthesisUtterance("");
+      silentUtt.volume = 0;
+      synth.speak(silentUtt);
+      synth.cancel();
+    } catch(e) {}
     document.getElementById("playOverlay").style.display = "none";
     var bar = document.getElementById("controlBar");
     if (bar) bar.style.display = "flex";
@@ -2277,6 +2302,44 @@ body {
     showScene(0);
     updateProgress();
   });
+
+  /* ── FULLSCREEN ── */
+  var fsBtn = document.getElementById("fullscreenBtn");
+  if (fsBtn) {
+    fsBtn.addEventListener("click", function () {
+      var stage = document.getElementById("stage");
+      if (!stage) return;
+      var doc = document;
+      var isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+      if (isFs) {
+        (doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen).call(doc);
+      } else {
+        var fn = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.mozRequestFullScreen || stage.msRequestFullscreen;
+        if (fn) fn.call(stage);
+      }
+    });
+    function onFsChange() {
+      var doc = document;
+      var isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+      fsBtn.textContent = isFs ? "⛶" : "⛶";
+      fsBtn.style.color = isFs ? "#f96a00" : "";
+      if (isFs) {
+        /* In fullscreen, rescale stage to fill screen */
+        var stage = document.getElementById("stage");
+        if (stage) {
+          var scale = Math.min(screen.width / 1280, screen.height / 720);
+          stage.style.transform = "scale(" + scale + ")";
+          stage.style.transformOrigin = "center center";
+        }
+      } else {
+        scaleStage();
+      }
+    }
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    document.addEventListener("mozfullscreenchange", onFsChange);
+    document.addEventListener("MSFullscreenChange", onFsChange);
+  }
 
   /* Play/Pause */
   var ppBtn = document.getElementById("playPauseBtn");
