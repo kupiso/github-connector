@@ -676,7 +676,15 @@ body {
   box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
-#subtitle.visible { opacity: 1; }
+#subtitle.visible {
+  opacity: 1;
+  animation: subtitleSlideIn 0.45s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes subtitleSlideIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
 
 /* ══ SCENE TRANSITION FLASH ══ */
 #flash {
@@ -1001,11 +1009,12 @@ body {
   left: 24px;
   width: 54%;
   max-width: none;
-  font-size: 2.6rem;
-  padding: 1.1rem 1.4rem;
-  border-radius: 18px;
+  font-size: 2.4rem;
+  padding: 1.3rem 1.6rem;
+  border-radius: 16px;
   line-height: 1.65;
-  box-shadow: 0 10px 32px rgba(0,0,0,0.45);
+  letter-spacing: 0.015em;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,140,0,0.12);
 }
 
 #stage.mobile #controlBar {
