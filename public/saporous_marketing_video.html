@@ -1883,18 +1883,11 @@ body {
   /* ══════════════════════════════════════════════════════
      SUBTITLE SYSTEM
   ══════════════════════════════════════════════════════ */
-  var subEl    = document.getElementById("subtitle");
-  var subTimer = null;
-  function showSub(text, dur) {
-    clearTimeout(subTimer);
-    if (subEl) {
-      subEl.textContent = text;
-      subEl.classList.add("visible");
-    }
-    subTimer = setTimeout(function () {
-      if (subEl) subEl.classList.remove("visible");
-    }, dur || 4000);
-  }
+   var subEl    = document.getElementById("subtitle");
+   var subTimer = null;
+   function showSub(text, dur) {
+     // Subtitles disabled
+   }
 
   /* ══════════════════════════════════════════════════════
      FLASH TRANSITION
