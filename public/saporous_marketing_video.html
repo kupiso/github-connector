@@ -2323,20 +2323,37 @@ body {
       if (!stage) return;
       var vw = window.innerWidth, vh = window.innerHeight;
       var isPortrait = vh > vw;
+      /* Use contain-style scaling so nothing overflows or gets clipped */
       if (isPortrait) {
-        /* Rotate stage 90deg to show landscape content on portrait screen */
-        var scaleVal = Math.min(vh / 1280, vw / 720);
-        stage.style.cssText = "width:1280px!important;height:720px!important;position:fixed!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%) rotate(90deg) scale(" + scaleVal + ")!important;transform-origin:center center!important;z-index:999999!important;";
+        var scaleVal = Math.min(vh / 1280, vw / 720) * 0.98;
+        stage.style.cssText = "width:1280px!important;height:720px!important;position:fixed!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%) rotate(90deg) scale(" + scaleVal + ")!important;transform-origin:center center!important;z-index:999999!important;overflow:hidden!important;";
       } else {
-        var scaleVal = Math.min(vw / 1280, vh / 720);
-        stage.style.cssText = "width:1280px!important;height:720px!important;position:fixed!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%) scale(" + scaleVal + ")!important;transform-origin:center center!important;z-index:999999!important;";
+        var scaleVal = Math.min(vw / 1280, vh / 720) * 0.98;
+        stage.style.cssText = "width:1280px!important;height:720px!important;position:fixed!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%) scale(" + scaleVal + ")!important;transform-origin:center center!important;z-index:999999!important;overflow:hidden!important;";
       }
+      /* Ensure control bar and all children stay within bounds */
+      var cb = document.getElementById("controlBar");
+      if (cb) {
+        cb.style.cssText = "position:absolute!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;max-width:1280px!important;z-index:9999!important;box-sizing:border-box!important;overflow:hidden!important;flex-wrap:nowrap!important;white-space:nowrap!important;";
+      }
+      var si = document.getElementById("sceneInfo");
+      if (si) si.style.cssText = "position:absolute!important;bottom:68px!important;right:24px!important;z-index:999!important;font-size:11px!important;white-space:nowrap!important;";
+      /* Make sure subtitle doesn't overflow */
+      var sub = document.getElementById("subtitle");
+      if (sub) sub.style.cssText += "max-width:90%!important;word-wrap:break-word!important;overflow-wrap:break-word!important;white-space:normal!important;";
     }
 
     function removeFullscreenLayout() {
       var stage = document.getElementById("stage");
       if (!stage) return;
       stage.style.cssText = "";
+      /* Reset control bar, scene info, subtitle */
+      var cb = document.getElementById("controlBar");
+      if (cb) cb.style.cssText = "";
+      var si = document.getElementById("sceneInfo");
+      if (si) si.style.cssText = "";
+      var sub = document.getElementById("subtitle");
+      if (sub) sub.style.cssText = "";
       unlockOrientation();
       scaleStage();
     }
