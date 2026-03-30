@@ -2305,8 +2305,8 @@ body {
 
   /* ── FULLSCREEN ── */
   var fsBtn = document.getElementById("fullscreenBtn");
+  var isManualFs = false;
   if (fsBtn) {
-    /* Lock to landscape if Screen Orientation API is available */
     function tryLockLandscape() {
       if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock("landscape").catch(function(){});
@@ -2318,73 +2318,92 @@ body {
       }
     }
 
-    fsBtn.addEventListener("click", function () {
+    function applyFullscreenLayout() {
       var stage = document.getElementById("stage");
       if (!stage) return;
+      var vw = window.innerWidth, vh = window.innerHeight;
+      var isPortrait = vh > vw;
+      if (isPortrait) {
+        /* Rotate stage 90deg to show landscape content on portrait screen */
+        var scaleVal = Math.min(vh / 1280, vw / 720);
+        stage.style.cssText = "width:1280px!important;height:720px!important;position:fixed!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%) rotate(90deg) scale(" + scaleVal + ")!important;transform-origin:center center!important;z-index:999999!important;";
+      } else {
+        var scaleVal = Math.min(vw / 1280, vh / 720);
+        stage.style.cssText = "width:1280px!important;height:720px!important;position:fixed!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%) scale(" + scaleVal + ")!important;transform-origin:center center!important;z-index:999999!important;";
+      }
+    }
+
+    function removeFullscreenLayout() {
+      var stage = document.getElementById("stage");
+      if (!stage) return;
+      stage.style.cssText = "";
+      unlockOrientation();
+      scaleStage();
+    }
+
+    fsBtn.addEventListener("click", function () {
+      var elem = document.documentElement;
       var doc = document;
       var isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
-      if (isFs) {
+      if (isFs || isManualFs) {
+        isManualFs = false;
         unlockOrientation();
-        (doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen).call(doc);
+        var exitFn = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
+        if (exitFn) exitFn.call(doc);
+        removeFullscreenLayout();
+        fsBtn.textContent = "⛶";
+        fsBtn.style.color = "";
       } else {
-        var fn = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.mozRequestFullScreen || stage.msRequestFullscreen;
+        var fn = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.mozRequestFullScreen || elem.msRequestFullscreen;
         if (fn) {
-          var p = fn.call(stage);
-          if (p && p.then) p.then(tryLockLandscape);
-          else setTimeout(tryLockLandscape, 300);
+          var p = fn.call(elem);
+          if (p && p.then) {
+            p.then(function() {
+              tryLockLandscape();
+              setTimeout(applyFullscreenLayout, 100);
+            });
+          } else {
+            setTimeout(function() {
+              tryLockLandscape();
+              applyFullscreenLayout();
+            }, 300);
+          }
+        } else {
+          /* Fallback: no fullscreen API (e.g. some iOS) — do manual fullscreen */
+          isManualFs = true;
+          applyFullscreenLayout();
         }
+        fsBtn.textContent = "✕";
+        fsBtn.style.color = "#f96a00";
       }
     });
 
     function onFsChange() {
       var doc = document;
       var isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
-      fsBtn.textContent = isFs ? "✕" : "⛶";
-      fsBtn.style.color = isFs ? "#f96a00" : "";
-      var stage = document.getElementById("stage");
       if (isFs) {
-        /* In fullscreen, fill viewport — detect if we need to rotate */
-        if (stage) {
-          var sw = screen.width, sh = screen.height;
-          /* On portrait phones that didn't orientation-lock, rotate the stage */
-          var isPortrait = window.innerHeight > window.innerWidth;
-          if (isPortrait) {
-            /* Rotate 90deg so 1280 maps to screen height, 720 to screen width */
-            var scaleVal = Math.min(window.innerWidth / 720, window.innerHeight / 1280);
-            stage.style.transform = "rotate(90deg) scale(" + scaleVal + ")";
-            stage.style.transformOrigin = "center center";
-            stage.style.position = "fixed";
-            stage.style.top = "50%";
-            stage.style.left = "50%";
-            stage.style.marginTop = "-360px";
-            stage.style.marginLeft = "-640px";
-          } else {
-            var scaleVal = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
-            stage.style.transform = "scale(" + scaleVal + ")";
-            stage.style.transformOrigin = "center center";
-            stage.style.position = "fixed";
-            stage.style.top = "50%";
-            stage.style.left = "50%";
-            stage.style.marginTop = "-360px";
-            stage.style.marginLeft = "-640px";
-          }
-        }
-      } else {
-        unlockOrientation();
-        if (stage) {
-          stage.style.position = "";
-          stage.style.top = "";
-          stage.style.left = "";
-          stage.style.marginTop = "";
-          stage.style.marginLeft = "";
-        }
-        scaleStage();
+        fsBtn.textContent = "✕";
+        fsBtn.style.color = "#f96a00";
+        applyFullscreenLayout();
+      } else if (!isManualFs) {
+        fsBtn.textContent = "⛶";
+        fsBtn.style.color = "";
+        removeFullscreenLayout();
       }
     }
     document.addEventListener("fullscreenchange", onFsChange);
     document.addEventListener("webkitfullscreenchange", onFsChange);
     document.addEventListener("mozfullscreenchange", onFsChange);
     document.addEventListener("MSFullscreenChange", onFsChange);
+
+    /* Re-apply layout on orientation/resize changes while in fullscreen */
+    window.addEventListener("resize", function() {
+      var doc = document;
+      var isFs = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+      if (isFs || isManualFs) {
+        setTimeout(applyFullscreenLayout, 100);
+      }
+    });
   }
 
   /* Play/Pause */
