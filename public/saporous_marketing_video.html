@@ -2535,33 +2535,14 @@ body {
       if (playing) bar.classList.add("bar-hidden");
     }, 4000);
   }
-  function resetBarTimer() { showBar(); }
 
   /* Show on any interaction */
   ["mousemove","touchstart","click"].forEach(function(evt) {
-    document.getElementById("stage").addEventListener(evt, function() {
+    var st = document.getElementById("stage");
+    if (st) st.addEventListener(evt, function() {
       showBar();
     }, { passive: true });
   });
-
-  /* Show bar whenever play state changes */
-  var origPlay = window.playTimeline;
-  if (typeof origPlay === "function") {
-    window.playTimeline = function() { origPlay(); showBar(); };
-  }
-
-  /* Always visible when paused */
-  var _origPause = window.pauseTimeline;
-  if (typeof _origPause === "function") {
-    window.pauseTimeline = function() {
-      _origPause();
-      clearTimeout(_barTimer);
-      var bar = document.getElementById("controlBar");
-      if (bar) bar.classList.remove("bar-hidden");
-    };
-  }
-
-});
 
 })();
 
