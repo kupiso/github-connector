@@ -7,7 +7,8 @@ const Index = () => {
       src="/saporous_marketing_video.html"
       title="Saporous Marketing Video"
       allow="autoplay; fullscreen; speaker-selection"
-      sandbox="allow-scripts allow-same-origin allow-popups"
+      allowFullScreen
+      sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
       style={{ width: '100vw', height: '100vh', border: 'none', display: 'block' }}
     />
   );
