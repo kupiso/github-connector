@@ -2187,11 +2187,12 @@ body {
   /* ══════════════════════════════════════════════════════
      SCENE ANIMATIONS
   ══════════════════════════════════════════════════════ */
+  var animTimers = [];
   function runSceneAnimations(idx) {
-    sceneTimers.forEach(clearTimeout);
-    sceneTimers = [];
+    animTimers.forEach(clearTimeout);
+    animTimers = [];
     function t(fn, delay) {
-      sceneTimers.push(setTimeout(function () {
+      animTimers.push(setTimeout(function () {
         if (!isVideoPaused) fn();
       }, delay));
     }
