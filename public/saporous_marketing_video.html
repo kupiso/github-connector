@@ -1884,7 +1884,7 @@ body {
           if (isMusicOn) setMusicVolume(0.32);
           var wvDone = document.getElementById("voiceWave");
           if (wvDone) wvDone.classList.remove("active");
-          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 130));
+          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 220));
         };
         var estimatedMs = Math.max(900, Math.min(5200, (line.text.length / 13) * 1000 / Math.max(utt.rate, 0.8) + 600));
         var watchdog = setTimeout(function () {
