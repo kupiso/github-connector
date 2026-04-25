@@ -1911,7 +1911,7 @@ body {
         };
 
         try { synth.resume && synth.resume(); synth.speak(utt); } catch(e) { clearTimeout(watchdog); safeNext(); }
-      }, lineIdx === 1 ? Math.min(line.delay, 250) : 150));
+      }, lineIdx === 1 ? Math.min(Math.max(line.delay, 200), 350) : 240));
     }
 
     /* Small delay after cancel before starting fresh */
