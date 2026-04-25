@@ -2072,8 +2072,7 @@ body {
   }
 
   function goToScene(idx) {
-    sceneTimers.forEach(clearTimeout);
-    sceneTimers = [];
+    cancelAllSceneAdvances();
     stopVoice();
     flashTransition(function () { showScene(idx); });
   }
@@ -2094,14 +2093,23 @@ body {
     scheduleSceneAdvance(idx);
   }
 
+  /* SAFE PLAY MODE — only one scene-advance timer can ever exist.
+     Any prior timer is cleared, and a token guard inside the callback
+     ensures stale fires from race conditions are ignored. */
   function scheduleSceneAdvance(idx) {
+    clearActiveSceneTimer();
+    sceneAdvanceToken++;
+    var myToken = sceneAdvanceToken;
     var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
     var duration = Math.max(4500, (sceneDurations[idx] || 9000) / _ff);
-    sceneTimers.push(setTimeout(function () {
+    activeSceneTimer = setTimeout(function () {
+      activeSceneTimer = null;
+      /* Token guard: ignore if a newer schedule has been issued */
+      if (myToken !== sceneAdvanceToken) return;
       if (!playing || isVideoPaused || currentScene !== idx) return;
       if (idx >= scenes.length - 1) showEndCard();
       else nextScene();
-    }, duration));
+    }, duration);
   }
 
   function nextScene() {
@@ -2109,8 +2117,7 @@ body {
       showEndCard();
       return;
     }
-    sceneTimers.forEach(clearTimeout);
-    sceneTimers = [];
+    cancelAllSceneAdvances();
     stopVoice();
     flashTransition(function () { showScene(currentScene + 1); });
   }
