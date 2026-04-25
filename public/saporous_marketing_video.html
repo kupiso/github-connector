@@ -2414,10 +2414,12 @@ body {
     loadVoices();
     /* iOS/Safari: also try to unlock speech synthesis with a silent utterance */
     try {
-      var silentUtt = new SpeechSynthesisUtterance("");
-      silentUtt.volume = 0;
-      synth.speak(silentUtt);
-      synth.cancel();
+      if (synth && window.SpeechSynthesisUtterance) {
+        var silentUtt = new SpeechSynthesisUtterance(" ");
+        silentUtt.volume = 0;
+        synth.speak(silentUtt);
+        synth.cancel();
+      }
     } catch(e) {}
     document.getElementById("playOverlay").style.display = "none";
     var bar = document.getElementById("controlBar");
@@ -2600,7 +2602,7 @@ body {
     /* Restart current scene voice at new speed */
     if (!isVideoPaused && playing && isVoiceOn) {
       voiceTimers.forEach(clearTimeout); voiceTimers = [];
-      try { synth.cancel(); } catch(e) {}
+      if (synth) { try { synth.cancel(); } catch(e) {} }
       setTimeout(function() { speakScene(currentScene); }, 150);
     }
     /* Boost/reduce music during fast-forward */
