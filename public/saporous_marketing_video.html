@@ -1812,8 +1812,9 @@ body {
         }
         var utt = new SpeechSynthesisUtterance(line.text);
         if (voiceObj) utt.voice = voiceObj;
-        utt.rate   = Math.min(0.88 * ffSpeed, 3);
-        utt.pitch  = 1.1;
+        /* Energetic, fun marketing voice — faster pace, brighter pitch */
+        utt.rate   = Math.min(1.08 * ffSpeed, 3);
+        utt.pitch  = 1.25;
         utt.volume = 1.0;
         utt.lang   = voiceObj ? voiceObj.lang : "en-US";
 
