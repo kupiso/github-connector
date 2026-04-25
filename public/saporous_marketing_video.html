@@ -1902,11 +1902,11 @@ body {
         };
 
         try { synth.speak(utt); } catch(e) { speakNext(); }
-      }, lineIdx === 1 ? line.delay : 400));
+      }, lineIdx === 1 ? Math.min(line.delay, 250) : 150));
     }
 
     /* Small delay after cancel before starting fresh */
-    voiceTimers.push(setTimeout(speakNext, 300));
+    voiceTimers.push(setTimeout(speakNext, 80));
   }
 
   function stopVoice() {
