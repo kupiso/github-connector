@@ -1053,6 +1053,46 @@ body {
 #stage.mobile #playBtn { width: 148px; height: 148px; font-size: 4rem; }
 #stage.mobile #voiceNote { font-size: 1.35rem; }
 
+/* ── VOICE PRESET SELECTOR ── */
+#voicePresets {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 90%;
+}
+.preset-btn {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.preset-btn:hover { color: #fff; border-color: rgba(249,106,0,0.5); background: rgba(249,106,0,0.08); }
+.preset-btn.active {
+  background: linear-gradient(135deg, rgba(249,106,0,0.85), rgba(217,79,0,0.85));
+  border-color: rgba(249,106,0,0.9);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(249,106,0,0.45);
+}
+#presetLabel {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-top: 1.2rem;
+}
+#stage.mobile #presetLabel { font-size: 1.1rem; }
+#stage.mobile .preset-btn { font-size: 1.1rem; padding: 0.85rem 1.4rem; }
+
 /* End card mobile */
 #stage.mobile #endCard h2 { font-size: 4.2rem !important; }
 #stage.mobile #endCard p { font-size: 1.8rem !important; }
