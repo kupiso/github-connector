@@ -1809,19 +1809,9 @@ body {
   ];
 
   function pickVoice(voices) {
-    /* Prefer livelier, more expressive English voices for a fun marketing tone */
-    var preferred = [
-      "Google UK English Female",
-      "Google US English",
-      "Microsoft Aria",
-      "Microsoft Jenny",
-      "Microsoft Zira",
-      "Samantha",
-      "Karen",
-      "Tessa",
-      "Moira",
-      "Microsoft Hazel"
-    ];
+    /* Use the current preset's preferred voice list, then fall back */
+    var preset = VOICE_PRESETS[currentPreset] || VOICE_PRESETS.balanced;
+    var preferred = preset.preferred;
     for (var i = 0; i < preferred.length; i++) {
       for (var j = 0; j < voices.length; j++) {
         if (voices[j].name.indexOf(preferred[i]) !== -1) return voices[j];
