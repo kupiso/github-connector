@@ -2302,7 +2302,8 @@ body {
   ══════════════════════════════════════════════════════ */
   function showEndCard() {
     playing=false; isVideoPaused=false;
-    sceneTimers.forEach(clearTimeout); sceneTimers=[];
+    cancelAllSceneAdvances();
+    animTimers.forEach(clearTimeout); animTimers=[];
     voiceTimers.forEach(clearTimeout); voiceTimers=[];
     speechRunId++;
     if(synth){try{synth.cancel();}catch(e){}}
