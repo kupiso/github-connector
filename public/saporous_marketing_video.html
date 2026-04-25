@@ -2065,6 +2065,8 @@ body {
   }
 
   function showScene(idx) {
+    var ec = document.getElementById("endCard");
+    if (ec) { ec.style.opacity = "0"; ec.style.display = "none"; }
     scenes.forEach(function (id, i) {
       var el = document.getElementById(id);
       if (el) el.classList.toggle("active", i === idx);
@@ -2075,6 +2077,17 @@ body {
     updateDots(idx);
     runSceneAnimations(idx);
     speakScene(idx);
+    scheduleSceneAdvance(idx);
+  }
+
+  function scheduleSceneAdvance(idx) {
+    var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
+    var duration = Math.max(4500, (sceneDurations[idx] || 9000) / _ff);
+    sceneTimers.push(setTimeout(function () {
+      if (!playing || isVideoPaused || currentScene !== idx) return;
+      if (idx >= scenes.length - 1) showEndCard();
+      else nextScene();
+    }, duration));
   }
 
   function nextScene() {
@@ -2082,10 +2095,7 @@ body {
       showEndCard();
       return;
     }
-    /* Clear timers but don't hard-cancel voice - showScene > speakScene handles it */
-    voiceTimers.forEach(clearTimeout);
-    voiceTimers = [];
-    try { synth.cancel(); } catch(e) {}
+    stopVoice();
     flashTransition(function () { showScene(currentScene + 1); });
   }
 
@@ -2098,7 +2108,7 @@ body {
     pauseStart = performance.now();
     sceneTimers.forEach(clearTimeout); sceneTimers = [];
     voiceTimers.forEach(clearTimeout); voiceTimers = [];
-    try { synth.pause(); } catch(e) {}
+    if (synth) { try { synth.pause(); } catch(e) {} }
     if (audioCtx && audioCtx.state === "running") audioCtx.suspend();
     var btn = document.getElementById("playPauseBtn");
     if (btn) { btn.textContent = "▶"; btn.title = "Resume"; }
@@ -2114,9 +2124,10 @@ body {
     var btn = document.getElementById("playPauseBtn");
     if (btn) { btn.textContent = "⏸"; btn.title = "Pause"; }
     voiceTimers.push(setTimeout(function() {
-      try { synth.cancel(); } catch(e) {}
+      if (synth) { try { synth.cancel(); } catch(e) {} }
       setTimeout(function() { if (!isVideoPaused) speakScene(currentScene); }, 180);
     }, 100));
+    scheduleSceneAdvance(currentScene);
   }
 
   function togglePlayPause() {
