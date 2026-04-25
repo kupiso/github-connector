@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saporous — Marketing Video</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1740,17 +1743,17 @@ body {
   var VOICE_PRESETS = {
     hype: {
       label: "Fast Hype",
-      rate: 1.22, pitch: 1.35,
+      rate: 1.32, pitch: 1.35,
       preferred: ["Microsoft Aria", "Microsoft Jenny", "Google US English", "Samantha"]
     },
     balanced: {
       label: "Balanced Marketing",
-      rate: 1.08, pitch: 1.25,
+      rate: 1.18, pitch: 1.25,
       preferred: ["Google UK English Female", "Google US English", "Microsoft Aria", "Microsoft Jenny", "Microsoft Zira", "Samantha", "Karen"]
     },
     calm: {
       label: "Calm",
-      rate: 0.92, pitch: 1.0,
+      rate: 1.0, pitch: 1.0,
       preferred: ["Google UK English Female", "Microsoft Hazel", "Karen", "Moira", "Tessa", "Samantha"]
     }
   };
@@ -1854,7 +1857,7 @@ body {
         /* All lines done — advance to next scene after a short breath */
         voiceTimers.push(setTimeout(function () {
           if (!isVideoPaused && playing) { if(idx>=scenes.length-1){showEndCard();}else{nextScene();} }
-        }, 1200));
+        }, 500));
         return;
       }
       var line = lines[lineIdx];
@@ -1902,11 +1905,11 @@ body {
         };
 
         try { synth.speak(utt); } catch(e) { speakNext(); }
-      }, lineIdx === 1 ? line.delay : 400));
+      }, lineIdx === 1 ? Math.min(line.delay, 250) : 150));
     }
 
     /* Small delay after cancel before starting fresh */
-    voiceTimers.push(setTimeout(speakNext, 300));
+    voiceTimers.push(setTimeout(speakNext, 80));
   }
 
   function stopVoice() {
@@ -2294,7 +2297,7 @@ body {
     canvas.width = W; canvas.height = H;
     var cols = ["#f96a00","#2ecc71","#ffd700","rgba(255,255,255,0.5)"];
     var pts  = [];
-    for (var i = 0; i < 60; i++) {
+    for (var i = 0; i < 30; i++) {
       pts.push({ x: Math.random()*W, y: Math.random()*H,
         vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
         r: Math.random()*1.8+0.4, col: cols[Math.floor(Math.random()*cols.length)], a: Math.random()*0.5+0.2 });
