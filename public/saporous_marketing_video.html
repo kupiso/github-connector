@@ -2095,6 +2095,8 @@ body {
       showEndCard();
       return;
     }
+    sceneTimers.forEach(clearTimeout);
+    sceneTimers = [];
     stopVoice();
     flashTransition(function () { showScene(currentScene + 1); });
   }
@@ -2280,7 +2282,8 @@ body {
     playing=false; isVideoPaused=false;
     sceneTimers.forEach(clearTimeout); sceneTimers=[];
     voiceTimers.forEach(clearTimeout); voiceTimers=[];
-    try{synth.cancel();}catch(e){}
+    speechRunId++;
+    if(synth){try{synth.cancel();}catch(e){}}
     if(isMusicOn&&audioCtx&&musicGain) musicGain.gain.setTargetAtTime(0.18,audioCtx.currentTime,0.05);
     setTimeout(function(){
       var steps=80,stepMs=5000/steps,step=0;
