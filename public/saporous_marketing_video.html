@@ -2020,6 +2020,29 @@ body {
   var sceneDurations = [9000, 10000, 12000, 11000, 10000, 14000];
   var currentScene   = 0;
   var sceneTimers    = [];
+
+  /* ══════════════════════════════════════════════════════
+     SAFE PLAY MODE — single active scene timer + token guard.
+     Guarantees only ONE scene-advance timer can fire at a time
+     so the video can never "stack" on a single phase or
+     double-advance from leftover timers.
+  ══════════════════════════════════════════════════════ */
+  var activeSceneTimer = null;
+  var sceneAdvanceToken = 0;
+
+  function clearActiveSceneTimer() {
+    if (activeSceneTimer !== null) {
+      clearTimeout(activeSceneTimer);
+      activeSceneTimer = null;
+    }
+    sceneTimers.forEach(clearTimeout);
+    sceneTimers = [];
+  }
+
+  function cancelAllSceneAdvances() {
+    sceneAdvanceToken++;
+    clearActiveSceneTimer();
+  }
   var playing        = false;
   var totalDuration  = 66000;
   var elapsedBeforePause = 0;
