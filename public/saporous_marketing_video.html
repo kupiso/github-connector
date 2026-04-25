@@ -1735,6 +1735,26 @@ body {
   var synth      = window.speechSynthesis;
   var voiceObj   = null;
   var isVoiceOn  = true;
+
+  /* ── VOICE PRESETS ── */
+  var VOICE_PRESETS = {
+    hype: {
+      label: "Fast Hype",
+      rate: 1.22, pitch: 1.35,
+      preferred: ["Microsoft Aria", "Microsoft Jenny", "Google US English", "Samantha"]
+    },
+    balanced: {
+      label: "Balanced Marketing",
+      rate: 1.08, pitch: 1.25,
+      preferred: ["Google UK English Female", "Google US English", "Microsoft Aria", "Microsoft Jenny", "Microsoft Zira", "Samantha", "Karen"]
+    },
+    calm: {
+      label: "Calm",
+      rate: 0.92, pitch: 1.0,
+      preferred: ["Google UK English Female", "Microsoft Hazel", "Karen", "Moira", "Tessa", "Samantha"]
+    }
+  };
+  var currentPreset = "balanced";
   var voiceTimers = [];
 
   var voiceScripts = [
