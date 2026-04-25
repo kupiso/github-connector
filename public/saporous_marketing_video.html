@@ -1826,7 +1826,8 @@ body {
   function loadVoices() {
     var voices = synth.getVoices();
     if (voices.length) {
-      voiceObj = pickVoice(voices);
+      var picked = pickVoice(voices);
+      if (picked) voiceObj = picked;
       var lbl = document.getElementById("voiceLabel");
       if (lbl && voiceObj) lbl.textContent = "🎙 " + voiceObj.name;
     }
