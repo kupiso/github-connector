@@ -2355,6 +2355,23 @@ body {
     togglePlayPause();
   },{passive:true});
 
+    /* ── Voice preset selector wiring ── */
+    Array.prototype.forEach.call(document.querySelectorAll(".preset-btn"), function (btn) {
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var preset = btn.getAttribute("data-preset");
+        if (!preset || !VOICE_PRESETS[preset]) return;
+        currentPreset = preset;
+        Array.prototype.forEach.call(document.querySelectorAll(".preset-btn"), function (b) {
+          b.classList.toggle("active", b === btn);
+        });
+        /* Re-pick a voice that suits this preset */
+        loadVoices();
+        var lbl = document.getElementById("voiceLabel");
+        if (lbl) lbl.textContent = "🎙 " + VOICE_PRESETS[preset].label + (voiceObj ? " · " + voiceObj.name : "");
+      });
+    });
+
     document.getElementById("playBtn").addEventListener("click", function () {
     createAudioCtx();
     loadVoices();
