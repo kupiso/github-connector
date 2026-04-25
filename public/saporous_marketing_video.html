@@ -2129,7 +2129,7 @@ body {
     if (!playing || isVideoPaused) return;
     isVideoPaused = true;
     pauseStart = performance.now();
-    sceneTimers.forEach(clearTimeout); sceneTimers = [];
+    cancelAllSceneAdvances();
     voiceTimers.forEach(clearTimeout); voiceTimers = [];
     if (synth) { try { synth.pause(); } catch(e) {} }
     if (audioCtx && audioCtx.state === "running") audioCtx.suspend();
