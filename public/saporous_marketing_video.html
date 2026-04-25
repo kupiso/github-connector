@@ -1854,7 +1854,7 @@ body {
         /* All lines done — advance to next scene after a short breath */
         voiceTimers.push(setTimeout(function () {
           if (!isVideoPaused && playing) { if(idx>=scenes.length-1){showEndCard();}else{nextScene();} }
-        }, 1200));
+        }, 500));
         return;
       }
       var line = lines[lineIdx];
