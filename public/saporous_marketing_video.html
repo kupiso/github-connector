@@ -1053,6 +1053,46 @@ body {
 #stage.mobile #playBtn { width: 148px; height: 148px; font-size: 4rem; }
 #stage.mobile #voiceNote { font-size: 1.35rem; }
 
+/* ── VOICE PRESET SELECTOR ── */
+#voicePresets {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 90%;
+}
+.preset-btn {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.preset-btn:hover { color: #fff; border-color: rgba(249,106,0,0.5); background: rgba(249,106,0,0.08); }
+.preset-btn.active {
+  background: linear-gradient(135deg, rgba(249,106,0,0.85), rgba(217,79,0,0.85));
+  border-color: rgba(249,106,0,0.9);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(249,106,0,0.45);
+}
+#presetLabel {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-top: 1.2rem;
+}
+#stage.mobile #presetLabel { font-size: 1.1rem; }
+#stage.mobile .preset-btn { font-size: 1.1rem; padding: 0.85rem 1.4rem; }
+
 /* End card mobile */
 #stage.mobile #endCard h2 { font-size: 4.2rem !important; }
 #stage.mobile #endCard p { font-size: 1.8rem !important; }
@@ -1158,6 +1198,12 @@ body {
     <button id="playBtn">▶</button>
     <h2>Saporous Marketing Video</h2>
     <p>Press play to watch · 60 seconds · Full HD</p>
+    <div id="presetLabel">Choose narration style</div>
+    <div id="voicePresets">
+      <button class="preset-btn" data-preset="hype">⚡ Fast Hype</button>
+      <button class="preset-btn active" data-preset="balanced">🎯 Balanced Marketing</button>
+      <button class="preset-btn" data-preset="calm">🌙 Calm</button>
+    </div>
     <div id='voiceNote'>🎵 Background music plays automatically<br>🔊 Voice narration reads the script<br>⎵ Space to pause · M to mute music · V for voice</div>
   </div>
 
@@ -1689,6 +1735,26 @@ body {
   var synth      = window.speechSynthesis;
   var voiceObj   = null;
   var isVoiceOn  = true;
+
+  /* ── VOICE PRESETS ── */
+  var VOICE_PRESETS = {
+    hype: {
+      label: "Fast Hype",
+      rate: 1.22, pitch: 1.35,
+      preferred: ["Microsoft Aria", "Microsoft Jenny", "Google US English", "Samantha"]
+    },
+    balanced: {
+      label: "Balanced Marketing",
+      rate: 1.08, pitch: 1.25,
+      preferred: ["Google UK English Female", "Google US English", "Microsoft Aria", "Microsoft Jenny", "Microsoft Zira", "Samantha", "Karen"]
+    },
+    calm: {
+      label: "Calm",
+      rate: 0.92, pitch: 1.0,
+      preferred: ["Google UK English Female", "Microsoft Hazel", "Karen", "Moira", "Tessa", "Samantha"]
+    }
+  };
+  var currentPreset = "balanced";
   var voiceTimers = [];
 
   var voiceScripts = [
@@ -1743,19 +1809,9 @@ body {
   ];
 
   function pickVoice(voices) {
-    /* Prefer livelier, more expressive English voices for a fun marketing tone */
-    var preferred = [
-      "Google UK English Female",
-      "Google US English",
-      "Microsoft Aria",
-      "Microsoft Jenny",
-      "Microsoft Zira",
-      "Samantha",
-      "Karen",
-      "Tessa",
-      "Moira",
-      "Microsoft Hazel"
-    ];
+    /* Use the current preset's preferred voice list, then fall back */
+    var preset = VOICE_PRESETS[currentPreset] || VOICE_PRESETS.balanced;
+    var preferred = preset.preferred;
     for (var i = 0; i < preferred.length; i++) {
       for (var j = 0; j < voices.length; j++) {
         if (voices[j].name.indexOf(preferred[i]) !== -1) return voices[j];
@@ -1812,9 +1868,10 @@ body {
         }
         var utt = new SpeechSynthesisUtterance(line.text);
         if (voiceObj) utt.voice = voiceObj;
-        /* Energetic, fun marketing voice — faster pace, brighter pitch */
-        utt.rate   = Math.min(1.08 * ffSpeed, 3);
-        utt.pitch  = 1.25;
+        /* Apply voice preset (rate + pitch) — multiplied by fast-forward speed */
+        var preset = VOICE_PRESETS[currentPreset] || VOICE_PRESETS.balanced;
+        utt.rate   = Math.min(preset.rate * ffSpeed, 3);
+        utt.pitch  = preset.pitch;
         utt.volume = 1.0;
         utt.lang   = voiceObj ? voiceObj.lang : "en-US";
 
@@ -2297,6 +2354,23 @@ body {
     if(ec&&ec.style.display==="flex"){replayVideo();return;}
     togglePlayPause();
   },{passive:true});
+
+    /* ── Voice preset selector wiring ── */
+    Array.prototype.forEach.call(document.querySelectorAll(".preset-btn"), function (btn) {
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var preset = btn.getAttribute("data-preset");
+        if (!preset || !VOICE_PRESETS[preset]) return;
+        currentPreset = preset;
+        Array.prototype.forEach.call(document.querySelectorAll(".preset-btn"), function (b) {
+          b.classList.toggle("active", b === btn);
+        });
+        /* Re-pick a voice that suits this preset */
+        loadVoices();
+        var lbl = document.getElementById("voiceLabel");
+        if (lbl) lbl.textContent = "🎙 " + VOICE_PRESETS[preset].label + (voiceObj ? " · " + voiceObj.name : "");
+      });
+    });
 
     document.getElementById("playBtn").addEventListener("click", function () {
     createAudioCtx();
