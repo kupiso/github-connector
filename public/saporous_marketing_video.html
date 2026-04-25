@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
 <title>Saporous — Marketing Video</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1739,21 +1743,21 @@ body {
   var voiceObj   = null;
   var isVoiceOn  = true;
 
-  /* ── VOICE PRESETS ── */
+  /* ── VOICE PRESETS ── (smoother, warmer, less robotic) */
   var VOICE_PRESETS = {
     hype: {
       label: "Fast Hype",
-      rate: 1.32, pitch: 1.35,
-      preferred: ["Microsoft Aria", "Microsoft Jenny", "Google US English", "Samantha"]
+      rate: 1.18, pitch: 1.20,
+      preferred: ["Microsoft Aria Online", "Microsoft Aria", "Microsoft Jenny", "Google US English", "Samantha"]
     },
     balanced: {
       label: "Balanced Marketing",
-      rate: 1.18, pitch: 1.25,
-      preferred: ["Google UK English Female", "Google US English", "Microsoft Aria", "Microsoft Jenny", "Microsoft Zira", "Samantha", "Karen"]
+      rate: 1.05, pitch: 1.12,
+      preferred: ["Microsoft Aria Online", "Google UK English Female", "Microsoft Aria", "Microsoft Jenny", "Google US English", "Samantha", "Karen", "Microsoft Zira"]
     },
     calm: {
       label: "Calm",
-      rate: 1.0, pitch: 1.0,
+      rate: 0.95, pitch: 1.05,
       preferred: ["Google UK English Female", "Microsoft Hazel", "Karen", "Moira", "Tessa", "Samantha"]
     }
   };
@@ -1884,7 +1888,7 @@ body {
           if (isMusicOn) setMusicVolume(0.32);
           var wvDone = document.getElementById("voiceWave");
           if (wvDone) wvDone.classList.remove("active");
-          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 130));
+          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 220));
         };
         var estimatedMs = Math.max(900, Math.min(5200, (line.text.length / 13) * 1000 / Math.max(utt.rate, 0.8) + 600));
         var watchdog = setTimeout(function () {
@@ -1911,7 +1915,7 @@ body {
         };
 
         try { synth.resume && synth.resume(); synth.speak(utt); } catch(e) { clearTimeout(watchdog); safeNext(); }
-      }, lineIdx === 1 ? Math.min(line.delay, 250) : 150));
+      }, lineIdx === 1 ? Math.min(Math.max(line.delay, 200), 350) : 240));
     }
 
     /* Small delay after cancel before starting fresh */
@@ -2020,6 +2024,29 @@ body {
   var sceneDurations = [9000, 10000, 12000, 11000, 10000, 14000];
   var currentScene   = 0;
   var sceneTimers    = [];
+
+  /* ══════════════════════════════════════════════════════
+     SAFE PLAY MODE — single active scene timer + token guard.
+     Guarantees only ONE scene-advance timer can fire at a time
+     so the video can never "stack" on a single phase or
+     double-advance from leftover timers.
+  ══════════════════════════════════════════════════════ */
+  var activeSceneTimer = null;
+  var sceneAdvanceToken = 0;
+
+  function clearActiveSceneTimer() {
+    if (activeSceneTimer !== null) {
+      clearTimeout(activeSceneTimer);
+      activeSceneTimer = null;
+    }
+    sceneTimers.forEach(clearTimeout);
+    sceneTimers = [];
+  }
+
+  function cancelAllSceneAdvances() {
+    sceneAdvanceToken++;
+    clearActiveSceneTimer();
+  }
   var playing        = false;
   var totalDuration  = 66000;
   var elapsedBeforePause = 0;
@@ -2049,8 +2076,7 @@ body {
   }
 
   function goToScene(idx) {
-    sceneTimers.forEach(clearTimeout);
-    sceneTimers = [];
+    cancelAllSceneAdvances();
     stopVoice();
     flashTransition(function () { showScene(idx); });
   }
@@ -2071,14 +2097,23 @@ body {
     scheduleSceneAdvance(idx);
   }
 
+  /* SAFE PLAY MODE — only one scene-advance timer can ever exist.
+     Any prior timer is cleared, and a token guard inside the callback
+     ensures stale fires from race conditions are ignored. */
   function scheduleSceneAdvance(idx) {
+    clearActiveSceneTimer();
+    sceneAdvanceToken++;
+    var myToken = sceneAdvanceToken;
     var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
     var duration = Math.max(4500, (sceneDurations[idx] || 9000) / _ff);
-    sceneTimers.push(setTimeout(function () {
+    activeSceneTimer = setTimeout(function () {
+      activeSceneTimer = null;
+      /* Token guard: ignore if a newer schedule has been issued */
+      if (myToken !== sceneAdvanceToken) return;
       if (!playing || isVideoPaused || currentScene !== idx) return;
       if (idx >= scenes.length - 1) showEndCard();
       else nextScene();
-    }, duration));
+    }, duration);
   }
 
   function nextScene() {
@@ -2086,8 +2121,7 @@ body {
       showEndCard();
       return;
     }
-    sceneTimers.forEach(clearTimeout);
-    sceneTimers = [];
+    cancelAllSceneAdvances();
     stopVoice();
     flashTransition(function () { showScene(currentScene + 1); });
   }
@@ -2099,7 +2133,7 @@ body {
     if (!playing || isVideoPaused) return;
     isVideoPaused = true;
     pauseStart = performance.now();
-    sceneTimers.forEach(clearTimeout); sceneTimers = [];
+    cancelAllSceneAdvances();
     voiceTimers.forEach(clearTimeout); voiceTimers = [];
     if (synth) { try { synth.pause(); } catch(e) {} }
     if (audioCtx && audioCtx.state === "running") audioCtx.suspend();
@@ -2157,11 +2191,12 @@ body {
   /* ══════════════════════════════════════════════════════
      SCENE ANIMATIONS
   ══════════════════════════════════════════════════════ */
+  var animTimers = [];
   function runSceneAnimations(idx) {
-    sceneTimers.forEach(clearTimeout);
-    sceneTimers = [];
+    animTimers.forEach(clearTimeout);
+    animTimers = [];
     function t(fn, delay) {
-      sceneTimers.push(setTimeout(function () {
+      animTimers.push(setTimeout(function () {
         if (!isVideoPaused) fn();
       }, delay));
     }
@@ -2271,7 +2306,8 @@ body {
   ══════════════════════════════════════════════════════ */
   function showEndCard() {
     playing=false; isVideoPaused=false;
-    sceneTimers.forEach(clearTimeout); sceneTimers=[];
+    cancelAllSceneAdvances();
+    animTimers.forEach(clearTimeout); animTimers=[];
     voiceTimers.forEach(clearTimeout); voiceTimers=[];
     speechRunId++;
     if(synth){try{synth.cancel();}catch(e){}}
