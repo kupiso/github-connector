@@ -1735,7 +1735,7 @@ body {
   /* ══════════════════════════════════════════════════════
      VOICE ENGINE — Web Speech API
   ══════════════════════════════════════════════════════ */
-  var synth      = window.speechSynthesis;
+  var synth      = window.speechSynthesis || null;
   var voiceObj   = null;
   var isVoiceOn  = true;
 
@@ -1759,6 +1759,7 @@ body {
   };
   var currentPreset = "balanced";
   var voiceTimers = [];
+  var speechRunId = 0;
 
   var voiceScripts = [
     /* Scene 1 — Brand Reveal (short and punchy) */
@@ -1827,6 +1828,7 @@ body {
   }
 
   function loadVoices() {
+    if (!synth || !synth.getVoices) return;
     var voices = synth.getVoices();
     if (voices.length) {
       var picked = pickVoice(voices);
@@ -1836,7 +1838,7 @@ body {
     }
   }
 
-  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+  if (synth && synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
   loadVoices();
 
   /* speak() retired — utterances now built inline in speakScene() */
@@ -1844,20 +1846,22 @@ body {
   function speakScene(idx) {
     voiceTimers.forEach(clearTimeout);
     voiceTimers = [];
+    speechRunId++;
+    var runId = speechRunId;
     var lines = voiceScripts[idx];
     if (!lines || lines.length === 0) return;
 
     /* Hard-cancel anything left from previous scene, then wait a beat */
-    try { synth.cancel(); } catch(e) {}
+    if (synth) { try { synth.cancel(); } catch(e) {} }
 
     var lineIdx = 0;
 
     function speakNext() {
+      if (runId !== speechRunId || isVideoPaused || !playing || currentScene !== idx) return;
       if (lineIdx >= lines.length) {
-        /* All lines done — advance to next scene after a short breath */
-        voiceTimers.push(setTimeout(function () {
-          if (!isVideoPaused && playing) { if(idx>=scenes.length-1){showEndCard();}else{nextScene();} }
-        }, 500));
+        if (isMusicOn) setMusicVolume(0.32);
+        var waveDone = document.getElementById("voiceWave");
+        if (waveDone) waveDone.classList.remove("active");
         return;
       }
       var line = lines[lineIdx];
@@ -1865,9 +1869,9 @@ body {
 
       /* Wait the line's intro delay, then speak */
       voiceTimers.push(setTimeout(function () {
-        if (!isVoiceOn) {
-          /* Voice off — still advance scene on fixed timer */
-          voiceTimers.push(setTimeout(speakNext, 8000));
+        if (runId !== speechRunId || isVideoPaused || !playing || currentScene !== idx) return;
+        if (!isVoiceOn || !synth || !window.SpeechSynthesisUtterance) {
+          voiceTimers.push(setTimeout(speakNext, 450));
           return;
         }
         /* Refresh voice in case voices loaded after initial pick or preset changed */
@@ -1882,6 +1886,23 @@ body {
         utt.volume = 1.0;
         utt.lang   = voiceObj ? voiceObj.lang : "en-US";
 
+        var done = false;
+        var safeNext = function () {
+          if (done) return;
+          done = true;
+          if (isMusicOn) setMusicVolume(0.32);
+          var wvDone = document.getElementById("voiceWave");
+          if (wvDone) wvDone.classList.remove("active");
+          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 130));
+        };
+        var estimatedMs = Math.max(900, Math.min(5200, (line.text.length / 13) * 1000 / Math.max(utt.rate, 0.8) + 600));
+        var watchdog = setTimeout(function () {
+          if (done || runId !== speechRunId) return;
+          try { synth.cancel(); } catch(e) {}
+          safeNext();
+        }, estimatedMs);
+        voiceTimers.push(watchdog);
+
         utt.onstart = function () {
           if (isMusicOn) setMusicVolume(0.14);
           var wv = document.getElementById("voiceWave");
@@ -1889,22 +1910,16 @@ body {
         };
 
         utt.onend = function () {
-          if (isMusicOn) setMusicVolume(0.32);
-          var wv = document.getElementById("voiceWave");
-          if (wv) wv.classList.remove("active");
-          /* Chain to next line */
-          speakNext();
+          clearTimeout(watchdog);
+          safeNext();
         };
 
         utt.onerror = function () {
-          if (isMusicOn) setMusicVolume(0.32);
-          var wv = document.getElementById("voiceWave");
-          if (wv) wv.classList.remove("active");
-          /* On error, still advance */
-          voiceTimers.push(setTimeout(speakNext, 500));
+          clearTimeout(watchdog);
+          safeNext();
         };
 
-        try { synth.speak(utt); } catch(e) { speakNext(); }
+        try { synth.resume && synth.resume(); synth.speak(utt); } catch(e) { clearTimeout(watchdog); safeNext(); }
       }, lineIdx === 1 ? Math.min(line.delay, 250) : 150));
     }
 
@@ -1914,9 +1929,10 @@ body {
 
   function stopVoice() {
     /* Clear the onend-chain timers first so speakNext won't fire */
+    speechRunId++;
     voiceTimers.forEach(clearTimeout);
     voiceTimers = [];
-    try { synth.cancel(); } catch (e) {}
+    if (synth) { try { synth.cancel(); } catch (e) {} }
     if (isMusicOn) setMusicVolume(0.18);
     var wv = document.getElementById("voiceWave");
     if (wv) wv.classList.remove("active");
@@ -1926,8 +1942,8 @@ body {
     isVoiceOn = !isVoiceOn;
     var btn = document.getElementById("voiceBtn");
     if (!isVoiceOn) {
-      try { synth.pause(); } catch(e) {}
-      setTimeout(function(){ try{ synth.cancel(); }catch(e){} }, 100);
+      if (synth) { try { synth.pause(); } catch(e) {} }
+      setTimeout(function(){ if (synth) { try{ synth.cancel(); }catch(e){} } }, 100);
       if (btn) btn.textContent = "🔇 VOICE";
       if (isMusicOn) setMusicVolume(0.18);
       var wv = document.getElementById("voiceWave");
