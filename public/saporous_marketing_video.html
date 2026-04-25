@@ -1735,7 +1735,7 @@ body {
   /* ══════════════════════════════════════════════════════
      VOICE ENGINE — Web Speech API
   ══════════════════════════════════════════════════════ */
-  var synth      = window.speechSynthesis;
+  var synth      = window.speechSynthesis || null;
   var voiceObj   = null;
   var isVoiceOn  = true;
 
@@ -1759,55 +1759,47 @@ body {
   };
   var currentPreset = "balanced";
   var voiceTimers = [];
+  var speechRunId = 0;
 
   var voiceScripts = [
     /* Scene 1 — Brand Reveal (short and punchy) */
     [
-      { delay: 700,  text: "Saporous." },
-      { delay: 0,    text: "Your trusted IT solutions partner." },
-      { delay: 0,    text: "Built in South Africa. Built for the world." }
+      { delay: 450,  text: "Meet Saporous." },
+      { delay: 0,    text: "Smart IT solutions that move fast." },
+      { delay: 0,    text: "Built in South Africa. Ready for the world." }
     ],
     /* Scene 2 — Problem Hook */
     [
-      { delay: 500,  text: "Here is the truth." },
-      { delay: 0,    text: "Your business deserves a powerful online presence." },
-      { delay: 0,    text: "In today's world, eighty one percent of customers research online before they buy." },
-      { delay: 0,    text: "Three seconds is all it takes for a slow website to lose a visitor forever." },
-      { delay: 0,    text: "Do not let a weak digital presence cost you customers." }
+      { delay: 350,  text: "Attention businesses." },
+      { delay: 0,    text: "Customers check you online before they trust you." },
+      { delay: 0,    text: "If your site is slow, outdated, or missing, sales disappear." },
+      { delay: 0,    text: "Saporous fixes that fast." }
     ],
     /* Scene 3 — Services */
     [
-      { delay: 500,  text: "Introducing Saporous. Complete digital solutions, under one roof." },
-      { delay: 0,    text: "We build blazing fast websites and revenue-ready e-commerce stores." },
-      { delay: 0,    text: "Native mobile apps, stunning UI designs, and intelligent AI integrations." },
-      { delay: 0,    text: "Plus SEO strategies that put you on page one." },
-      { delay: 0,    text: "Everything your business needs, delivered by one committed team." }
+      { delay: 350,  text: "Websites. Online stores. Mobile apps." },
+      { delay: 0,    text: "Clean UI design, smart AI features, and SEO that gets found." },
+      { delay: 0,    text: "One team. One powerful digital launchpad." }
     ],
     /* Scene 4 — Tech */
     [
-      { delay: 500,  text: "We build with the very best tools in the world." },
+      { delay: 350,  text: "We build with serious tech." },
       { delay: 0,    text: "React. Next JS. Node JS. AWS. Docker." },
-      { delay: 0,    text: "The same technology stack trusted by Netflix, Airbnb and Shopify." },
-      { delay: 0,    text: "Enterprise grade technology, at prices made for South African businesses." }
+      { delay: 0,    text: "Enterprise energy, made affordable for growing brands." }
     ],
     /* Scene 5 — Results */
     [
-      { delay: 500,  text: "We do not just promise results. We deliver them." },
-      { delay: 0,    text: "99.9 percent uptime." },
-      { delay: 0,    text: "Plus 94 percent conversion rate improvement." },
-      { delay: 0,    text: "95 plus Google PageSpeed scores." },
-      { delay: 0,    text: "Over 50 successful projects delivered." },
+      { delay: 350,  text: "The goal is simple." },
+      { delay: 0,    text: "Faster sites. Stronger trust. More conversions." },
       { delay: 0,    text: "Real numbers. Real businesses. Real growth." }
     ],
     /* Scene 6 — CTA */
     [
-      { delay: 500,  text: "Your digital future starts right now." },
-      { delay: 0,    text: "Whether you need a lightning fast website, a store that sells while you sleep, or a mobile app your customers will love." },
-      { delay: 0,    text: "Saporous makes it happen." },
-      { delay: 0,    text: "Visit saporous-website dot onrender dot com." },
+      { delay: 350,  text: "Ready to level up?" },
+      { delay: 0,    text: "Saporous can build the website, store, app, or AI tool your business needs next." },
+      { delay: 0,    text: "Visit saporous website dot onrender dot com." },
       { delay: 0,    text: "Or call plus 27, 73, 561, 0318." },
-      { delay: 0,    text: "Let us build something amazing together." },
-      { delay: 0,    text: "Saporous. Your trusted IT solutions partner." }
+      { delay: 0,    text: "Let's build something amazing together." }
     ]
   ];
 
@@ -1827,6 +1819,7 @@ body {
   }
 
   function loadVoices() {
+    if (!synth || !synth.getVoices) return;
     var voices = synth.getVoices();
     if (voices.length) {
       var picked = pickVoice(voices);
@@ -1836,7 +1829,7 @@ body {
     }
   }
 
-  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+  if (synth && synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
   loadVoices();
 
   /* speak() retired — utterances now built inline in speakScene() */
@@ -1844,20 +1837,22 @@ body {
   function speakScene(idx) {
     voiceTimers.forEach(clearTimeout);
     voiceTimers = [];
+    speechRunId++;
+    var runId = speechRunId;
     var lines = voiceScripts[idx];
     if (!lines || lines.length === 0) return;
 
     /* Hard-cancel anything left from previous scene, then wait a beat */
-    try { synth.cancel(); } catch(e) {}
+    if (synth) { try { synth.cancel(); } catch(e) {} }
 
     var lineIdx = 0;
 
     function speakNext() {
+      if (runId !== speechRunId || isVideoPaused || !playing || currentScene !== idx) return;
       if (lineIdx >= lines.length) {
-        /* All lines done — advance to next scene after a short breath */
-        voiceTimers.push(setTimeout(function () {
-          if (!isVideoPaused && playing) { if(idx>=scenes.length-1){showEndCard();}else{nextScene();} }
-        }, 500));
+        if (isMusicOn) setMusicVolume(0.32);
+        var waveDone = document.getElementById("voiceWave");
+        if (waveDone) waveDone.classList.remove("active");
         return;
       }
       var line = lines[lineIdx];
@@ -1865,9 +1860,9 @@ body {
 
       /* Wait the line's intro delay, then speak */
       voiceTimers.push(setTimeout(function () {
-        if (!isVoiceOn) {
-          /* Voice off — still advance scene on fixed timer */
-          voiceTimers.push(setTimeout(speakNext, 8000));
+        if (runId !== speechRunId || isVideoPaused || !playing || currentScene !== idx) return;
+        if (!isVoiceOn || !synth || !window.SpeechSynthesisUtterance) {
+          voiceTimers.push(setTimeout(speakNext, 450));
           return;
         }
         /* Refresh voice in case voices loaded after initial pick or preset changed */
@@ -1882,6 +1877,23 @@ body {
         utt.volume = 1.0;
         utt.lang   = voiceObj ? voiceObj.lang : "en-US";
 
+        var done = false;
+        var safeNext = function () {
+          if (done) return;
+          done = true;
+          if (isMusicOn) setMusicVolume(0.32);
+          var wvDone = document.getElementById("voiceWave");
+          if (wvDone) wvDone.classList.remove("active");
+          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 130));
+        };
+        var estimatedMs = Math.max(900, Math.min(5200, (line.text.length / 13) * 1000 / Math.max(utt.rate, 0.8) + 600));
+        var watchdog = setTimeout(function () {
+          if (done || runId !== speechRunId) return;
+          try { synth.cancel(); } catch(e) {}
+          safeNext();
+        }, estimatedMs);
+        voiceTimers.push(watchdog);
+
         utt.onstart = function () {
           if (isMusicOn) setMusicVolume(0.14);
           var wv = document.getElementById("voiceWave");
@@ -1889,22 +1901,16 @@ body {
         };
 
         utt.onend = function () {
-          if (isMusicOn) setMusicVolume(0.32);
-          var wv = document.getElementById("voiceWave");
-          if (wv) wv.classList.remove("active");
-          /* Chain to next line */
-          speakNext();
+          clearTimeout(watchdog);
+          safeNext();
         };
 
         utt.onerror = function () {
-          if (isMusicOn) setMusicVolume(0.32);
-          var wv = document.getElementById("voiceWave");
-          if (wv) wv.classList.remove("active");
-          /* On error, still advance */
-          voiceTimers.push(setTimeout(speakNext, 500));
+          clearTimeout(watchdog);
+          safeNext();
         };
 
-        try { synth.speak(utt); } catch(e) { speakNext(); }
+        try { synth.resume && synth.resume(); synth.speak(utt); } catch(e) { clearTimeout(watchdog); safeNext(); }
       }, lineIdx === 1 ? Math.min(line.delay, 250) : 150));
     }
 
@@ -1914,9 +1920,10 @@ body {
 
   function stopVoice() {
     /* Clear the onend-chain timers first so speakNext won't fire */
+    speechRunId++;
     voiceTimers.forEach(clearTimeout);
     voiceTimers = [];
-    try { synth.cancel(); } catch (e) {}
+    if (synth) { try { synth.cancel(); } catch (e) {} }
     if (isMusicOn) setMusicVolume(0.18);
     var wv = document.getElementById("voiceWave");
     if (wv) wv.classList.remove("active");
@@ -1926,8 +1933,8 @@ body {
     isVoiceOn = !isVoiceOn;
     var btn = document.getElementById("voiceBtn");
     if (!isVoiceOn) {
-      try { synth.pause(); } catch(e) {}
-      setTimeout(function(){ try{ synth.cancel(); }catch(e){} }, 100);
+      if (synth) { try { synth.pause(); } catch(e) {} }
+      setTimeout(function(){ if (synth) { try{ synth.cancel(); }catch(e){} } }, 100);
       if (btn) btn.textContent = "🔇 VOICE";
       if (isMusicOn) setMusicVolume(0.18);
       var wv = document.getElementById("voiceWave");
@@ -2049,6 +2056,8 @@ body {
   }
 
   function showScene(idx) {
+    var ec = document.getElementById("endCard");
+    if (ec) { ec.style.opacity = "0"; ec.style.display = "none"; }
     scenes.forEach(function (id, i) {
       var el = document.getElementById(id);
       if (el) el.classList.toggle("active", i === idx);
@@ -2059,6 +2068,17 @@ body {
     updateDots(idx);
     runSceneAnimations(idx);
     speakScene(idx);
+    scheduleSceneAdvance(idx);
+  }
+
+  function scheduleSceneAdvance(idx) {
+    var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
+    var duration = Math.max(4500, (sceneDurations[idx] || 9000) / _ff);
+    sceneTimers.push(setTimeout(function () {
+      if (!playing || isVideoPaused || currentScene !== idx) return;
+      if (idx >= scenes.length - 1) showEndCard();
+      else nextScene();
+    }, duration));
   }
 
   function nextScene() {
@@ -2066,10 +2086,9 @@ body {
       showEndCard();
       return;
     }
-    /* Clear timers but don't hard-cancel voice - showScene > speakScene handles it */
-    voiceTimers.forEach(clearTimeout);
-    voiceTimers = [];
-    try { synth.cancel(); } catch(e) {}
+    sceneTimers.forEach(clearTimeout);
+    sceneTimers = [];
+    stopVoice();
     flashTransition(function () { showScene(currentScene + 1); });
   }
 
@@ -2082,7 +2101,7 @@ body {
     pauseStart = performance.now();
     sceneTimers.forEach(clearTimeout); sceneTimers = [];
     voiceTimers.forEach(clearTimeout); voiceTimers = [];
-    try { synth.pause(); } catch(e) {}
+    if (synth) { try { synth.pause(); } catch(e) {} }
     if (audioCtx && audioCtx.state === "running") audioCtx.suspend();
     var btn = document.getElementById("playPauseBtn");
     if (btn) { btn.textContent = "▶"; btn.title = "Resume"; }
@@ -2098,9 +2117,10 @@ body {
     var btn = document.getElementById("playPauseBtn");
     if (btn) { btn.textContent = "⏸"; btn.title = "Pause"; }
     voiceTimers.push(setTimeout(function() {
-      try { synth.cancel(); } catch(e) {}
+      if (synth) { try { synth.cancel(); } catch(e) {} }
       setTimeout(function() { if (!isVideoPaused) speakScene(currentScene); }, 180);
     }, 100));
+    scheduleSceneAdvance(currentScene);
   }
 
   function togglePlayPause() {
@@ -2253,7 +2273,8 @@ body {
     playing=false; isVideoPaused=false;
     sceneTimers.forEach(clearTimeout); sceneTimers=[];
     voiceTimers.forEach(clearTimeout); voiceTimers=[];
-    try{synth.cancel();}catch(e){}
+    speechRunId++;
+    if(synth){try{synth.cancel();}catch(e){}}
     if(isMusicOn&&audioCtx&&musicGain) musicGain.gain.setTargetAtTime(0.18,audioCtx.currentTime,0.05);
     setTimeout(function(){
       var steps=80,stepMs=5000/steps,step=0;
@@ -2384,10 +2405,12 @@ body {
     loadVoices();
     /* iOS/Safari: also try to unlock speech synthesis with a silent utterance */
     try {
-      var silentUtt = new SpeechSynthesisUtterance("");
-      silentUtt.volume = 0;
-      synth.speak(silentUtt);
-      synth.cancel();
+      if (synth && window.SpeechSynthesisUtterance) {
+        var silentUtt = new SpeechSynthesisUtterance(" ");
+        silentUtt.volume = 0;
+        synth.speak(silentUtt);
+        synth.cancel();
+      }
     } catch(e) {}
     document.getElementById("playOverlay").style.display = "none";
     var bar = document.getElementById("controlBar");
@@ -2570,7 +2593,7 @@ body {
     /* Restart current scene voice at new speed */
     if (!isVideoPaused && playing && isVoiceOn) {
       voiceTimers.forEach(clearTimeout); voiceTimers = [];
-      try { synth.cancel(); } catch(e) {}
+      if (synth) { try { synth.cancel(); } catch(e) {} }
       setTimeout(function() { speakScene(currentScene); }, 150);
     }
     /* Boost/reduce music during fast-forward */
