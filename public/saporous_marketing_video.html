@@ -2242,27 +2242,127 @@ body {
   }
 
   /* ══════════════════════════════════════════════════════
-     PROGRESS BAR (click to scrub scenes)
+     PROGRESS BAR — click + drag scrubber (full manual control)
+     Lets the user pick exactly where to start: click anywhere or
+     drag the handle. Tooltip shows the target scene. Works on
+     desktop (mouse) and mobile (touch).
   ══════════════════════════════════════════════════════ */
-  var progressBar = document.getElementById("progressBar");
-  var progressTrack = document.getElementById("progressTrack");
+  var progressBar    = document.getElementById("progressBar");
+  var progressTrack  = document.getElementById("progressTrack");
+  var progressHandle = document.getElementById("progressHandle");
+  var progressTicks  = document.getElementById("progressTicks");
+  var scrubTooltip   = document.getElementById("scrubTooltip");
+
+  /* Render scene tick marks once we know how many scenes there are. */
+  function renderProgressTicks() {
+    if (!progressTicks || !scenes || !scenes.length) return;
+    progressTicks.innerHTML = "";
+    for (var i = 1; i < scenes.length; i++) {
+      var t = document.createElement("div");
+      t.className = "tick";
+      t.style.left = (i / scenes.length * 100) + "%";
+      progressTicks.appendChild(t);
+    }
+  }
+  renderProgressTicks();
+
+  var isScrubbing = false;
+  var scrubPct = 0;
+
+  function pctFromEvent(ev) {
+    var rect = progressTrack.getBoundingClientRect();
+    var x = (ev.touches && ev.touches[0]) ? ev.touches[0].clientX
+          : (ev.changedTouches && ev.changedTouches[0]) ? ev.changedTouches[0].clientX
+          : ev.clientX;
+    var p = (x - rect.left) / rect.width;
+    if (p < 0) p = 0; if (p > 1) p = 1;
+    return p;
+  }
+
+  function sceneFromPct(p) {
+    var idx = Math.floor(p * scenes.length);
+    if (idx >= scenes.length) idx = scenes.length - 1;
+    if (idx < 0) idx = 0;
+    return idx;
+  }
+
+  function showScrubPreview(p) {
+    if (progressBar)  progressBar.style.width = (p * 100) + "%";
+    if (progressHandle) progressHandle.style.left = (p * 100) + "%";
+    if (scrubTooltip && progressTrack) {
+      var rect = progressTrack.getBoundingClientRect();
+      scrubTooltip.style.left = (p * rect.width) + "px";
+      scrubTooltip.textContent = "Scene " + (sceneFromPct(p) + 1) + " / " + scenes.length;
+      scrubTooltip.classList.add("visible");
+    }
+  }
+
+  function hideScrubTooltip() {
+    if (scrubTooltip) scrubTooltip.classList.remove("visible");
+  }
+
+  function commitScrub(p) {
+    if (!playing) return;
+    var target = sceneFromPct(p);
+    if (isVideoPaused) resumeVideo();
+    goToScene(target);
+  }
+
+  function startScrub(ev) {
+    if (!playing) return;
+    isScrubbing = true;
+    progressTrack.classList.add("scrubbing");
+    scrubPct = pctFromEvent(ev);
+    showScrubPreview(scrubPct);
+    ev.preventDefault();
+  }
+  function moveScrub(ev) {
+    if (!isScrubbing) return;
+    scrubPct = pctFromEvent(ev);
+    showScrubPreview(scrubPct);
+    ev.preventDefault();
+  }
+  function endScrub(ev) {
+    if (!isScrubbing) return;
+    isScrubbing = false;
+    progressTrack.classList.remove("scrubbing");
+    hideScrubTooltip();
+    commitScrub(scrubPct);
+  }
 
   if (progressTrack) {
-    progressTrack.addEventListener("click", function (e) {
-      if (!playing) return;
-      var rect = progressTrack.getBoundingClientRect();
-      var pct  = (e.clientX - rect.left) / rect.width;
-      var targetScene = Math.min(Math.floor(pct * scenes.length), scenes.length - 1);
-      goToScene(targetScene);
+    /* Mouse */
+    progressTrack.addEventListener("mousedown", startScrub);
+    window.addEventListener("mousemove", moveScrub);
+    window.addEventListener("mouseup", endScrub);
+
+    /* Touch */
+    progressTrack.addEventListener("touchstart", startScrub, {passive:false});
+    window.addEventListener("touchmove", moveScrub, {passive:false});
+    window.addEventListener("touchend", endScrub);
+    window.addEventListener("touchcancel", endScrub);
+
+    /* Hover preview (desktop) so user can SEE where they'll land before clicking */
+    progressTrack.addEventListener("mousemove", function(ev){
+      if (isScrubbing) return;
+      var p = pctFromEvent(ev);
+      if (scrubTooltip) {
+        var rect = progressTrack.getBoundingClientRect();
+        scrubTooltip.style.left = (p * rect.width) + "px";
+        scrubTooltip.textContent = "Scene " + (sceneFromPct(p) + 1) + " / " + scenes.length;
+        scrubTooltip.classList.add("visible");
+      }
     });
+    progressTrack.addEventListener("mouseleave", hideScrubTooltip);
   }
 
   function updateProgress() {
     if (!playing || !playStartTime) return;
-    if (!isVideoPaused) {
+    if (!isVideoPaused && !isScrubbing) {
       var elapsed = (performance.now() - playStartTime) - elapsedBeforePause;
       var pct = Math.min(elapsed / totalDuration * 100, 100);
-      if (progressBar) progressBar.style.width = pct + "%";
+      if (progressBar)    progressBar.style.width = pct + "%";
+      if (progressHandle) progressHandle.style.left = pct + "%";
     }
     requestAnimationFrame(updateProgress);
   }
