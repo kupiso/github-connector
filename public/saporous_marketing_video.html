@@ -1856,6 +1856,10 @@ body {
     function speakNext() {
       if (runId !== speechRunId || isVideoPaused || !playing || currentScene !== idx) return;
       if (lineIdx >= lines.length) {
+        if (synth && (synth.speaking || synth.pending)) {
+          voiceTimers.push(setTimeout(speakNext, 400));
+          return;
+        }
         isNarrationRunning = false;
         if (isMusicOn) setMusicVolume(0.32);
         var waveDone = document.getElementById("voiceWave");
