@@ -2100,12 +2100,28 @@ body {
   /* SAFE PLAY MODE — only one scene-advance timer can ever exist.
      Any prior timer is cleared, and a token guard inside the callback
      ensures stale fires from race conditions are ignored. */
+  function estimateSceneNarrationMs(idx) {
+    var lines = voiceScripts[idx] || [];
+    if (!lines.length || !isVoiceOn) return 0;
+    var preset = VOICE_PRESETS[currentPreset] || VOICE_PRESETS.calm;
+    var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
+    var voiceSpeedBoost = _ff > 1 ? Math.min((_ff - 1) * 0.08, 0.14) : 0;
+    var rate = Math.min(Math.max(preset.rate + voiceSpeedBoost, 0.5), 1.18);
+    var total = 80;
+    lines.forEach(function(line, i) {
+      total += i === 0 ? Math.min(Math.max(line.delay || 250, 200), 350) : 240;
+      total += Math.max(1800, Math.min(12000, (line.text.length / 9.5) * 1000 / Math.max(rate, 0.75) + 1400));
+      total += 320;
+    });
+    return total + 1200;
+  }
+
   function scheduleSceneAdvance(idx) {
     clearActiveSceneTimer();
     sceneAdvanceToken++;
     var myToken = sceneAdvanceToken;
     var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
-    var duration = Math.max(4500, (sceneDurations[idx] || 9000) / _ff);
+    var duration = Math.max(4500, (sceneDurations[idx] || 9000) / _ff, estimateSceneNarrationMs(idx));
     activeSceneTimer = setTimeout(function () {
       activeSceneTimer = null;
       /* Token guard: ignore if a newer schedule has been issued */
