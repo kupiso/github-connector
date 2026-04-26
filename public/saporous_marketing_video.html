@@ -2608,11 +2608,18 @@ body {
 
   /* Skip forward */
   var skipBtn = document.getElementById("skipBtn");
+  function handleSkip() {
+    if (isVideoPaused) resumeVideo();
+    goToScene(currentScene < scenes.length - 1 ? currentScene + 1 : 0);
+  }
   if (skipBtn) {
-    skipBtn.addEventListener("click", function () {
-      if (isVideoPaused) resumeVideo();
-      goToScene(currentScene < scenes.length - 1 ? currentScene + 1 : 0);
-    });
+    skipBtn.addEventListener("click", function(ev){ ev.stopPropagation(); handleSkip(); });
+    skipBtn.addEventListener("touchend", function(ev){
+      ev.preventDefault(); ev.stopPropagation(); handleSkip();
+    }, {passive:false});
+    skipBtn.style.minWidth = "44px";
+    skipBtn.style.minHeight = "32px";
+    skipBtn.style.touchAction = "manipulation";
   }
 
   /* Rewind:
