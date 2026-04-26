@@ -2738,6 +2738,11 @@ body {
     }, { passive: true });
   });
 
+  /* Expose handlers used by inline onclick attributes (the script is
+     wrapped in an IIFE, so these would otherwise be unreachable). */
+  window.replayVideo    = replayVideo;
+  window.togglePlayPause = togglePlayPause;
+
 })();
 
 
