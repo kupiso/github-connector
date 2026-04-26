@@ -1764,6 +1764,7 @@ body {
   var currentPreset = "calm";
   var voiceTimers = [];
   var speechRunId = 0;
+  var isNarrationRunning = false;
 
   var voiceScripts = [
     /* Scene 1 — Brand Reveal (short and punchy) */
@@ -1829,7 +1830,7 @@ body {
       var picked = pickVoice(voices);
       if (picked) voiceObj = picked;
       var lbl = document.getElementById("voiceLabel");
-      if (lbl && voiceObj) lbl.textContent = "🎙 " + voiceObj.name;
+      if (lbl && voiceObj) lbl.textContent = "🎙 " + (VOICE_PRESETS[currentPreset] || VOICE_PRESETS.calm).label + " · " + voiceObj.name;
     }
   }
 
@@ -1845,6 +1846,7 @@ body {
     var runId = speechRunId;
     var lines = voiceScripts[idx];
     if (!lines || lines.length === 0) return;
+    isNarrationRunning = isVoiceOn;
 
     /* Hard-cancel anything left from previous scene, then wait a beat */
     if (synth) { try { synth.cancel(); } catch(e) {} }
@@ -1854,6 +1856,7 @@ body {
     function speakNext() {
       if (runId !== speechRunId || isVideoPaused || !playing || currentScene !== idx) return;
       if (lineIdx >= lines.length) {
+        isNarrationRunning = false;
         if (isMusicOn) setMusicVolume(0.32);
         var waveDone = document.getElementById("voiceWave");
         if (waveDone) waveDone.classList.remove("active");
