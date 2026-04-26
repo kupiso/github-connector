@@ -1852,14 +1852,17 @@ body {
     if (synth) { try { synth.cancel(); } catch(e) {} }
 
     var lineIdx = 0;
+    var finishWaits = 0;
 
     function speakNext() {
       if (runId !== speechRunId || isVideoPaused || !playing || currentScene !== idx) return;
       if (lineIdx >= lines.length) {
-        if (synth && (synth.speaking || synth.pending)) {
+        if (synth && (synth.speaking || synth.pending) && finishWaits < 8) {
+          finishWaits++;
           voiceTimers.push(setTimeout(speakNext, 400));
           return;
         }
+        if (finishWaits >= 8 && synth) { try { synth.cancel(); } catch(e) {} }
         isNarrationRunning = false;
         if (isMusicOn) setMusicVolume(0.32);
         var waveDone = document.getElementById("voiceWave");
