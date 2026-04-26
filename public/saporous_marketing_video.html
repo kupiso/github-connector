@@ -1873,10 +1873,11 @@ body {
         if (!voiceObj) loadVoices();
         var utt = new SpeechSynthesisUtterance(line.text);
         if (voiceObj) utt.voice = voiceObj;
-        /* Apply voice preset (rate + pitch) — multiplied by fast-forward speed */
+        /* Apply voice preset smoothly. Keep narration natural even if visuals fast-forward. */
         var preset = VOICE_PRESETS[currentPreset] || VOICE_PRESETS.balanced;
         var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
-        utt.rate   = Math.min(Math.max(preset.rate * _ff, 0.5), 3);
+        var voiceSpeedBoost = _ff > 1 ? Math.min((_ff - 1) * 0.08, 0.14) : 0;
+        utt.rate   = Math.min(Math.max(preset.rate + voiceSpeedBoost, 0.5), 1.18);
         utt.pitch  = preset.pitch;
         utt.volume = 1.0;
         utt.lang   = voiceObj ? voiceObj.lang : "en-US";
@@ -1888,12 +1889,11 @@ body {
           if (isMusicOn) setMusicVolume(0.32);
           var wvDone = document.getElementById("voiceWave");
           if (wvDone) wvDone.classList.remove("active");
-          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 220));
+          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 320));
         };
-        var estimatedMs = Math.max(900, Math.min(5200, (line.text.length / 13) * 1000 / Math.max(utt.rate, 0.8) + 600));
+        var estimatedMs = Math.max(1800, Math.min(12000, (line.text.length / 9.5) * 1000 / Math.max(utt.rate, 0.75) + 1400));
         var watchdog = setTimeout(function () {
           if (done || runId !== speechRunId) return;
-          try { synth.cancel(); } catch(e) {}
           safeNext();
         }, estimatedMs);
         voiceTimers.push(watchdog);
