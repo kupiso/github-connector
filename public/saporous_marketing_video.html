@@ -2133,7 +2133,16 @@ body {
       if (myToken !== sceneAdvanceToken) return;
       if (!playing || isVideoPaused || currentScene !== idx) return;
       if (isNarrationRunning) {
-        scheduleSceneAdvance(idx);
+        activeSceneTimer = setTimeout(function waitForNarration() {
+          activeSceneTimer = null;
+          if (myToken !== sceneAdvanceToken || !playing || isVideoPaused || currentScene !== idx) return;
+          if (isNarrationRunning) {
+            activeSceneTimer = setTimeout(waitForNarration, 600);
+            return;
+          }
+          if (idx >= scenes.length - 1) showEndCard();
+          else nextScene();
+        }, 600);
         return;
       }
       if (idx >= scenes.length - 1) showEndCard();
