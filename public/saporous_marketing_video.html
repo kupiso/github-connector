@@ -2615,13 +2615,42 @@ body {
     });
   }
 
-  /* Rewind */
+  /* Rewind:
+       - First tap (or tap after >1.2s): replay the CURRENT scene from the start
+         so the user can hear what they missed.
+       - Quick second tap (within 1.2s): jump to the PREVIOUS scene.
+     Works for click and touchend (mobile). */
   var rwBtn = document.getElementById("rewindBtn");
+  var _rwLastTap = 0;
+  function handleRewind() {
+    if (isVideoPaused) resumeVideo();
+    /* If we're on the end card, treat rewind as "play last scene again" */
+    var ec = document.getElementById("endCard");
+    if (ec && ec.style.display === "flex") {
+      replayVideo();
+      setTimeout(function(){ goToScene(scenes.length - 1); }, 60);
+      _rwLastTap = Date.now();
+      return;
+    }
+    var now = Date.now();
+    var quick = (now - _rwLastTap) < 1200;
+    _rwLastTap = now;
+    if (quick && currentScene > 0) {
+      goToScene(currentScene - 1);
+    } else {
+      /* Replay current scene from the beginning */
+      goToScene(currentScene);
+    }
+  }
   if (rwBtn) {
-    rwBtn.addEventListener("click", function () {
-      if (isVideoPaused) resumeVideo();
-      goToScene(currentScene > 0 ? currentScene - 1 : 0);
-    });
+    rwBtn.addEventListener("click", function(ev){ ev.stopPropagation(); handleRewind(); });
+    rwBtn.addEventListener("touchend", function(ev){
+      ev.preventDefault(); ev.stopPropagation(); handleRewind();
+    }, {passive:false});
+    rwBtn.style.minWidth = "44px";
+    rwBtn.style.minHeight = "32px";
+    rwBtn.style.touchAction = "manipulation";
+    rwBtn.title = "Rewind: tap to replay this scene · double-tap for previous (← key)";
   }
 
   /* ── FAST FORWARD ── */
