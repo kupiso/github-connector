@@ -1416,12 +1416,8 @@ body {
       <a href="https://saporous-website.onrender.com" target="_blank" class="s6-btn" id="s6Btn">
         🚀 Get Started Today
       </a>
-      <div class="s6-url" id="s6Url">saporous-website.onrender.com</div>
-      <div class="s6-contacts" id="s6Con">
-        <div class="s6-contact-item">📞 <span>+27 73 561 0318</span></div>
-        <div class="s6-contact-item">✉️ <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="037062736c716c7670706a736c43646e626a6f2d606c6e">[email&#160;protected]</a></span></div>
-        <div class="s6-contact-item">📍 <span>South Africa</span></div>
-      </div>
+      <div class="s6-contacts" id="s6Con" style="display:none;"></div>
+
     </div>
   </div>
 
@@ -1499,18 +1495,8 @@ body {
       >▶ Watch Again</button>
     </div>
 
-    <!-- Contact row -->
-    <div style="display:flex;gap:2.5rem;flex-wrap:wrap;justify-content:center;">
-      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:rgba(255,255,255,0.4);">
-        📞 <span style="color:rgba(255,255,255,0.75)">+27 73 561 0318</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:rgba(255,255,255,0.4);">
-        ✉️ <span style="color:rgba(255,255,255,0.75)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8dfeecfde2ffe2f8fefee4fde2cdeae0ece4e1a3eee2e0">[email&#160;protected]</a></span>
-      </div>
-      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:rgba(255,255,255,0.4);">
-        🌐 <span style="color:rgba(255,255,255,0.75)">saporous-website.onrender.com</span>
-      </div>
-    </div>
+    <!-- Contact row removed -->
+
   </div>
 
 </div><!-- /stage -->
@@ -1802,8 +1788,6 @@ body {
     [
       { delay: 380, text: "So, are you ready to elevate your brand?" },
       { delay: 0,   text: "Whether you need a website, an online store, a mobile app, or an AI-powered tool, Saporous is ready to build it with you." },
-      { delay: 0,   text: "Visit saporous website dot onrender dot com." },
-      { delay: 0,   text: "Or reach out anytime, on plus 27, 73, 561, 0318." },
       { delay: 0,   text: "Let's create something truly remarkable, together." }
     ]
   ];
@@ -2334,9 +2318,7 @@ body {
       fadeIn(document.getElementById("s6Con"), 600, 2600, 10);
       var btn = document.getElementById("s6Btn");
       if (btn) btn.style.animation = "playPulse 2.5s ease-in-out infinite";
-      t(function () {
-        showSub("saporous-website.onrender.com · +27 73 561 0318 · saporoussipo@gmail.com", 12000);
-      }, 7500);
+      /* Contact subtitle removed */
       /* Loop back to start after last scene */
       /* Scene loops back when voice finishes */
     }
