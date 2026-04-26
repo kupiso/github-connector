@@ -1207,9 +1207,9 @@ body {
     <p>Press play to watch · 60 seconds · Full HD</p>
     <div id="presetLabel">Choose narration style</div>
     <div id="voicePresets">
+      <button class="preset-btn active" data-preset="calm">🌙 Calm</button>
+      <button class="preset-btn" data-preset="balanced">🎯 Balanced Marketing</button>
       <button class="preset-btn" data-preset="hype">⚡ Fast Hype</button>
-      <button class="preset-btn active" data-preset="balanced">🎯 Balanced Marketing</button>
-      <button class="preset-btn" data-preset="calm">🌙 Calm</button>
     </div>
     <div id='voiceNote'>🎵 Background music plays automatically<br>🔊 Voice narration reads the script<br>⎵ Space to pause · M to mute music · V for voice</div>
   </div>
@@ -1747,23 +1747,24 @@ body {
   var VOICE_PRESETS = {
     hype: {
       label: "Fast Hype",
-      rate: 1.18, pitch: 1.20,
+      rate: 1.08, pitch: 1.14,
       preferred: ["Microsoft Aria Online", "Microsoft Aria", "Microsoft Jenny", "Google US English", "Samantha"]
     },
     balanced: {
       label: "Balanced Marketing",
-      rate: 1.05, pitch: 1.12,
+      rate: 0.98, pitch: 1.08,
       preferred: ["Microsoft Aria Online", "Google UK English Female", "Microsoft Aria", "Microsoft Jenny", "Google US English", "Samantha", "Karen", "Microsoft Zira"]
     },
     calm: {
       label: "Calm",
-      rate: 0.95, pitch: 1.05,
-      preferred: ["Google UK English Female", "Microsoft Hazel", "Karen", "Moira", "Tessa", "Samantha"]
+      rate: 0.94, pitch: 1.04,
+      preferred: ["Microsoft Aria Online", "Google UK English Female", "Microsoft Jenny", "Microsoft Hazel", "Karen", "Moira", "Tessa", "Samantha"]
     }
   };
-  var currentPreset = "balanced";
+  var currentPreset = "calm";
   var voiceTimers = [];
   var speechRunId = 0;
+  var isNarrationRunning = false;
 
   var voiceScripts = [
     /* Scene 1 — Brand Reveal (short and punchy) */
@@ -1829,7 +1830,7 @@ body {
       var picked = pickVoice(voices);
       if (picked) voiceObj = picked;
       var lbl = document.getElementById("voiceLabel");
-      if (lbl && voiceObj) lbl.textContent = "🎙 " + voiceObj.name;
+      if (lbl && voiceObj) lbl.textContent = "🎙 " + (VOICE_PRESETS[currentPreset] || VOICE_PRESETS.calm).label + " · " + voiceObj.name;
     }
   }
 
@@ -1845,15 +1846,24 @@ body {
     var runId = speechRunId;
     var lines = voiceScripts[idx];
     if (!lines || lines.length === 0) return;
+    isNarrationRunning = isVoiceOn;
 
     /* Hard-cancel anything left from previous scene, then wait a beat */
     if (synth) { try { synth.cancel(); } catch(e) {} }
 
     var lineIdx = 0;
+    var finishWaits = 0;
 
     function speakNext() {
       if (runId !== speechRunId || isVideoPaused || !playing || currentScene !== idx) return;
       if (lineIdx >= lines.length) {
+        if (synth && (synth.speaking || synth.pending) && finishWaits < 8) {
+          finishWaits++;
+          voiceTimers.push(setTimeout(speakNext, 400));
+          return;
+        }
+        if (finishWaits >= 8 && synth) { try { synth.cancel(); } catch(e) {} }
+        isNarrationRunning = false;
         if (isMusicOn) setMusicVolume(0.32);
         var waveDone = document.getElementById("voiceWave");
         if (waveDone) waveDone.classList.remove("active");
@@ -1873,10 +1883,11 @@ body {
         if (!voiceObj) loadVoices();
         var utt = new SpeechSynthesisUtterance(line.text);
         if (voiceObj) utt.voice = voiceObj;
-        /* Apply voice preset (rate + pitch) — multiplied by fast-forward speed */
+        /* Apply voice preset smoothly. Keep narration natural even if visuals fast-forward. */
         var preset = VOICE_PRESETS[currentPreset] || VOICE_PRESETS.balanced;
         var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
-        utt.rate   = Math.min(Math.max(preset.rate * _ff, 0.5), 3);
+        var voiceSpeedBoost = _ff > 1 ? Math.min((_ff - 1) * 0.08, 0.14) : 0;
+        utt.rate   = Math.min(Math.max(preset.rate + voiceSpeedBoost, 0.5), 1.18);
         utt.pitch  = preset.pitch;
         utt.volume = 1.0;
         utt.lang   = voiceObj ? voiceObj.lang : "en-US";
@@ -1888,12 +1899,11 @@ body {
           if (isMusicOn) setMusicVolume(0.32);
           var wvDone = document.getElementById("voiceWave");
           if (wvDone) wvDone.classList.remove("active");
-          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 220));
+          if (runId === speechRunId) voiceTimers.push(setTimeout(speakNext, 320));
         };
-        var estimatedMs = Math.max(900, Math.min(5200, (line.text.length / 13) * 1000 / Math.max(utt.rate, 0.8) + 600));
+        var estimatedMs = Math.max(1800, Math.min(12000, (line.text.length / 9.5) * 1000 / Math.max(utt.rate, 0.75) + 1400));
         var watchdog = setTimeout(function () {
           if (done || runId !== speechRunId) return;
-          try { synth.cancel(); } catch(e) {}
           safeNext();
         }, estimatedMs);
         voiceTimers.push(watchdog);
@@ -1925,6 +1935,7 @@ body {
   function stopVoice() {
     /* Clear the onend-chain timers first so speakNext won't fire */
     speechRunId++;
+    isNarrationRunning = false;
     voiceTimers.forEach(clearTimeout);
     voiceTimers = [];
     if (synth) { try { synth.cancel(); } catch (e) {} }
@@ -1937,6 +1948,7 @@ body {
     isVoiceOn = !isVoiceOn;
     var btn = document.getElementById("voiceBtn");
     if (!isVoiceOn) {
+      isNarrationRunning = false;
       if (synth) { try { synth.pause(); } catch(e) {} }
       setTimeout(function(){ if (synth) { try{ synth.cancel(); }catch(e){} } }, 100);
       if (btn) btn.textContent = "🔇 VOICE";
@@ -2100,17 +2112,46 @@ body {
   /* SAFE PLAY MODE — only one scene-advance timer can ever exist.
      Any prior timer is cleared, and a token guard inside the callback
      ensures stale fires from race conditions are ignored. */
+  function estimateSceneNarrationMs(idx) {
+    var lines = voiceScripts[idx] || [];
+    if (!lines.length || !isVoiceOn) return 0;
+    var preset = VOICE_PRESETS[currentPreset] || VOICE_PRESETS.calm;
+    var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
+    var voiceSpeedBoost = _ff > 1 ? Math.min((_ff - 1) * 0.08, 0.14) : 0;
+    var rate = Math.min(Math.max(preset.rate + voiceSpeedBoost, 0.5), 1.18);
+    var total = 80;
+    lines.forEach(function(line, i) {
+      total += i === 0 ? Math.min(Math.max(line.delay || 250, 200), 350) : 240;
+      total += Math.max(1800, Math.min(12000, (line.text.length / 9.5) * 1000 / Math.max(rate, 0.75) + 1400));
+      total += 320;
+    });
+    return total + 1200;
+  }
+
   function scheduleSceneAdvance(idx) {
     clearActiveSceneTimer();
     sceneAdvanceToken++;
     var myToken = sceneAdvanceToken;
     var _ff = (typeof ffSpeed === "number" && ffSpeed > 0) ? ffSpeed : 1;
-    var duration = Math.max(4500, (sceneDurations[idx] || 9000) / _ff);
+    var duration = Math.max(4500, (sceneDurations[idx] || 9000) / _ff, estimateSceneNarrationMs(idx));
     activeSceneTimer = setTimeout(function () {
       activeSceneTimer = null;
       /* Token guard: ignore if a newer schedule has been issued */
       if (myToken !== sceneAdvanceToken) return;
       if (!playing || isVideoPaused || currentScene !== idx) return;
+      if (isNarrationRunning) {
+        activeSceneTimer = setTimeout(function waitForNarration() {
+          activeSceneTimer = null;
+          if (myToken !== sceneAdvanceToken || !playing || isVideoPaused || currentScene !== idx) return;
+          if (isNarrationRunning) {
+            activeSceneTimer = setTimeout(waitForNarration, 600);
+            return;
+          }
+          if (idx >= scenes.length - 1) showEndCard();
+          else nextScene();
+        }, 600);
+        return;
+      }
       if (idx >= scenes.length - 1) showEndCard();
       else nextScene();
     }, duration);
