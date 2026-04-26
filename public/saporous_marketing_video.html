@@ -1928,6 +1928,7 @@ body {
   function stopVoice() {
     /* Clear the onend-chain timers first so speakNext won't fire */
     speechRunId++;
+    isNarrationRunning = false;
     voiceTimers.forEach(clearTimeout);
     voiceTimers = [];
     if (synth) { try { synth.cancel(); } catch (e) {} }
@@ -1940,6 +1941,7 @@ body {
     isVoiceOn = !isVoiceOn;
     var btn = document.getElementById("voiceBtn");
     if (!isVoiceOn) {
+      isNarrationRunning = false;
       if (synth) { try { synth.pause(); } catch(e) {} }
       setTimeout(function(){ if (synth) { try{ synth.cancel(); }catch(e){} } }, 100);
       if (btn) btn.textContent = "🔇 VOICE";
