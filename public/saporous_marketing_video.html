@@ -2651,7 +2651,17 @@ body {
     }
   }
 
-  if (ffBtnEl) ffBtnEl.addEventListener("click", cycleFastForward);
+  if (ffBtnEl) {
+    /* Bind both click and touchend so it responds instantly on mobile too */
+    ffBtnEl.addEventListener("click", function(ev){ ev.stopPropagation(); cycleFastForward(); });
+    ffBtnEl.addEventListener("touchend", function(ev){
+      ev.preventDefault(); ev.stopPropagation(); cycleFastForward();
+    }, {passive:false});
+    /* Make the tap target friendlier on phones */
+    ffBtnEl.style.minWidth = "44px";
+    ffBtnEl.style.minHeight = "32px";
+    ffBtnEl.style.touchAction = "manipulation";
+  }
 
   /* Fast-forward speed is applied directly in speakScene via ffSpeed */
 
