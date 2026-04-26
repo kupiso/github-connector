@@ -2428,19 +2428,8 @@ body {
   }
   scaleStage();
   window.addEventListener("resize",scaleStage);
-  var stEl=document.getElementById("stage");
-  if(stEl) stEl.addEventListener("touchstart",function(e){
-    if(!playing) return;
-    var controlBar = document.getElementById("controlBar");
-    if(controlBar && controlBar.contains(e.target)) return;
-    var playOverlay = document.getElementById("playOverlay");
-    if(playOverlay && playOverlay.contains(e.target)) return;
-    var endCardEl = document.getElementById("endCard");
-    if(endCardEl && endCardEl.contains(e.target)) return;
-    var ec=document.getElementById("endCard");
-    if(ec&&ec.style.display==="flex"){replayVideo();return;}
-    togglePlayPause();
-  },{passive:true});
+  /* NOTE: Removed stage-wide tap-to-toggle. Play/pause is controlled
+     ONLY by the dedicated control-bar button (#ppBtn) and the spacebar. */
 
     /* ── Voice preset selector wiring ── */
     Array.prototype.forEach.call(document.querySelectorAll(".preset-btn"), function (btn) {
